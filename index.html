@@ -3,341 +3,615 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1XBET - Official Gaming Platform</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <title>1xbet - Official Gaming Platform</title>
     <style>
-        :root {
-            --1xbet-blue: #1475e1;
-            --1xbet-dark: #121212;
-            --card-bg: #1e1e1e;
-            --accent-yellow: #f39c12;
-            --danger-color: #e74c3c;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--1xbet-dark); color: #fff; padding-bottom: 75px; }
+        body {
+            background-color: #0d1117;
+            color: #fff;
+        }
+        /* হেডার ডিজাইন */
+        header {
+            background-color: #0b2217;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 2px solid #ffcc00;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        .auth-buttons button {
+            padding: 6px 14px;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        .btn-signup {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+        }
+        .btn-login {
+            background-color: #d32f2f;
+            color: #fff;
+        }
+        .user-panel-info {
+            display: none;
+            font-size: 13px;
+            color: #ffcc00;
+            font-weight: bold;
+            background: #1a2332;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid #30363d;
+        }
+
+        /* নোটিশ বোর্ড চলমান টেক্সট (Marquee) */
+        .notice-board {
+            background-color: #1a2332;
+            color: #ffcc00;
+            padding: 8px 10px;
+            font-size: 13px;
+            border-bottom: 1px solid #30363d;
+            overflow: hidden;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .notice-board marquee {
+            width: 100%;
+        }
+
+        /* কন্টেইনার এবং গেম গ্রিড */
+        .container {
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .section-title {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: #ffcc00;
+            border-left: 4px solid #ffcc00;
+            padding-left: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        @media (min-width: 768px) {
+            .game-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 15px;
+            }
+        }
+        /* হাই কোয়ালিটি গেম কার্ড */
+        .game-card {
+            background-color: #161b22;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .game-card:hover {
+            transform: translateY(-3px);
+            border-color: #ffcc00;
+        }
+        .game-thumb-container {
+            width: 100%;
+            height: 110px;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+        }
+        .game-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .game-card:hover img {
+            transform: scale(1.05);
+        }
+        .game-info {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .game-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #e6edf3;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .play-btn {
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 7px 0;
+            width: 100%;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .play-btn:hover {
+            background: linear-gradient(to bottom, #ffea00, #ff9900);
+        }
+
+        /* ফুটার নেভিগেশন বার */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #0b2217;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #30363d;
+            z-index: 1000;
+        }
+        .nav-item {
+            color: #8b949e;
+            text-align: center;
+            font-size: 11px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .nav-item span {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        .nav-item:hover, .nav-item.active {
+            color: #ffcc00;
+        }
+
+        /* সুন্দর কাস্টম পপআপ মডাল ও লগইন ফর্ম উইন্ডো */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        .modal-box {
+            background-color: #161b22;
+            border: 2px solid #ffcc00;
+            border-radius: 10px;
+            width: 92%;
+            max-width: 400px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.7);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
         
-        /* 1xBet Top Header */
-        .header { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px 15px; border-bottom: 2px solid var(--1xbet-blue); position: sticky; top: 0; z-index: 1000; }
-        .logo-1xbet { font-size: 20px; font-weight: 900; color: #fff; font-style: italic; letter-spacing: 1px; }
-        .logo-1xbet span { color: var(--1xbet-blue); background: #fff; padding: 0 4px; border-radius: 3px; font-style: normal; }
-        
-        .auth-buttons { display: flex; gap: 6px; }
-        .btn-login { background: transparent; border: 1px solid var(--1xbet-blue); color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .btn-reg { background: var(--1xbet-blue); border: none; color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
-        .user-panel { display: none; align-items: center; gap: 8px; background: #2a2a2a; padding: 4px 10px; border-radius: 15px; border: 1px solid var(--1xbet-blue); }
-        .user-panel span { font-size: 12px; color: var(--accent-yellow); font-weight: bold; }
+        /* গেম খেলার জন্য ফুল স্ক্রিন মোডাল স্টাইল */
+        #gameArenaModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            display: none;
+            flex-direction: column;
+            z-index: 3000;
+        }
+        .game-arena-header {
+            background-color: #0b2217;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 2px solid #ffcc00;
+        }
+        .game-arena-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #121212;
+            padding: 20px;
+            text-align: center;
+        }
 
-        /* Search & Filter Bar */
-        .search-filter-container { padding: 10px 15px; background: #181818; }
-        .search-box { display: flex; align-items: center; background: #262626; border-radius: 20px; padding: 6px 12px; border: 1px solid #333; margin-bottom: 10px; }
-        .search-box span { color: #888; margin-right: 8px; }
-        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; }
-        
-        .filter-tags { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
-        .filter-tags::-webkit-scrollbar { display: none; }
-        .tag { background: #2a2a2a; padding: 5px 14px; border-radius: 15px; font-size: 12px; white-space: nowrap; cursor: pointer; border: 1px solid #333; color: #ccc; }
-        .tag.active { background: var(--accent-yellow); color: #000; font-weight: bold; border-color: var(--accent-yellow); }
-
-        /* Main Layout */
-        .main-layout { display: flex; }
-        .sidebar { width: 75px; background: #181818; min-height: calc(100vh - 140px); display: flex; flex-direction: column; align-items: center; padding-top: 10px; border-right: 1px solid #2a2a2a; }
-        .side-item { text-align: center; margin-bottom: 15px; cursor: pointer; color: #aaa; font-size: 10px; }
-        .side-item .icon-box { width: 42px; height: 42px; border-radius: 50%; background: #262626; display: flex; justify-content: center; align-items: center; margin: 0 auto 4px; font-size: 18px; border: 1px solid #333; }
-        .side-item.active { color: var(--accent-yellow); }
-        .side-item.active .icon-box { background: var(--accent-yellow); color: #000; border-color: var(--accent-yellow); }
-
-        .game-content { flex: 1; padding: 12px; }
-        .game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-        @media(max-width: 600px) { .game-grid { grid-template-columns: repeat(2, 1fr); } }
-        
-        .game-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; text-align: center; cursor: pointer; transition: transform 0.2s; position: relative; }
-        .game-card:active { transform: scale(0.97); }
-        .game-card img { width: 100%; height: 95px; object-fit: cover; }
-        .game-title { padding: 6px; font-size: 11px; font-weight: 600; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-        /* Bottom Navigation Bar (No Deposit/Withdraw) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #333; z-index: 1000; }
-        .nav-item { text-align: center; color: #999; font-size: 10px; cursor: pointer; text-decoration: none; flex: 1; }
-        .nav-item.active, .nav-item:hover { color: #fff; }
-        .nav-item span { display: block; font-size: 18px; margin-bottom: 2px; }
-        .nav-center-btn { background: linear-gradient(135deg, #f39c12, #e67e22); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: -18px auto 2px; color: #000; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid #1a1a1a; }
-
-        /* Account / Member Page */
-        #account-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; color: #fff; z-index: 2000; overflow-y: auto; }
-        .acc-header { background: #1f1f1f; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #333; }
-        .acc-menu-list { background: #1a1a1a; margin-top: 10px; }
-        .acc-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #2a2a2a; color: #ddd; font-size: 14px; font-weight: 500; cursor: pointer; }
-        .logout-btn-container { padding: 20px; background: #1a1a1a; margin-top: 15px; }
-        .logout-btn { width: 100%; background: var(--danger-color); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
-
-        /* Auth Modals */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; }
-        .auth-box { background: #1e293b; padding: 25px; border-radius: 10px; width: 90%; max-width: 380px; border: 1px solid var(--1xbet-blue); text-align: center; }
-        .auth-box h3 { margin-bottom: 15px; color: var(--1xbet-blue); }
-        .auth-box input { width: 100%; padding: 10px; margin-bottom: 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; outline: none; }
-        .auth-box button { width: 100%; padding: 10px; background: var(--1xbet-blue); color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 5px; }
-        
-        /* Custom Alert Modal */
-        .alert-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; align-items: center; }
-        .alert-box { background: #1e293b; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; border: 2px solid var(--accent-yellow); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .alert-logo { font-size: 35px; margin-bottom: 10px; color: var(--accent-yellow); }
-        .alert-text { font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 20px; line-height: 1.4; }
-        .alert-btn { background: var(--1xbet-blue); color: #fff; border: none; padding: 8px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
-
-        /* Game Arena Modal */
-        #game-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px 15px; border-bottom: 1px solid #333; }
-        .close-btn { background: var(--danger-color); color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .game-frame { flex: 1; width: 100%; background: #111; display: flex; justify-content: center; align-items: center; position: relative; overflow-y: auto; flex-direction: column; padding: 10px; }
+        .modal-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffcc00;
+            margin-bottom: 10px;
+        }
+        .modal-text {
+            font-size: 14px;
+            color: #e6edf3;
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .form-group {
+            margin-bottom: 12px;
+            text-align: left;
+        }
+        .form-group label {
+            font-size: 12px;
+            color: #ffcc00;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            background: #0d1117;
+            border: 1px solid #30363d;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .modal-action-btn {
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 10px 0;
+            width: 100%;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        .modal-close-btn {
+            background-color: #d32f2f;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
     </style>
+
+    <!-- ফায়ারবেস SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="logo-1xbet">1x<span>Bet</span></div>
-        <div class="auth-buttons" id="auth-buttons-container">
-            <button class="btn-login" onclick="openLoginModal()">লগ ইন</button>
-            <button class="btn-reg" onclick="openRegModal()">সাইন আপ</button>
-        </div>
-        <div class="user-panel" id="user-panel-container" style="display:none;">
-            <span>🪙 <span id="user-bal">0.00</span> কয়েন</span>
-        </div>
-    </div>
-
-    <!-- Search & Filter Bar -->
-    <div class="search-filter-container">
-        <div class="search-box">
-            <span>🔍</span>
-            <input type="text" placeholder="খেলার নাম">
-        </div>
-        <div class="filter-tags">
-            <div class="tag active">সব</div>
-            <div class="tag">নতুন</div>
-            <div class="tag">৩টি রিল</div>
-        </div>
-    </div>
-
-    <!-- Main Layout -->
-    <div class="main-layout">
-        <div class="sidebar">
-            <div class="side-item active"><div class="icon-box">🎰</div>স্লট</div>
-            <div class="side-item" onclick="alert('লাইভ সেকশন')"><div class="icon-box">🎲</div>লাইভ</div>
-            <div class="side-item" onclick="alert('স্পোর্টস সেকশন')"><div class="icon-box">⚽</div>স্পোর্টস</div>
-            <div class="side-item" onclick="alert('পোকার সেকশন')"><div class="icon-box">🃏</div>পোকার</div>
-        </div>
-
-        <div class="game-content">
-            <div class="game-grid">
-                <div class="game-card" onclick="launchGame('Super Ace')">
-                    <img src="image_9.png" alt="Super Ace"><div class="game-title">সুপার এস</div>
-                </div>
-                <div class="game-card" onclick="launchGame('Aviator')">
-                    <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=300" alt="Aviator"><div class="game-title">এভিয়েটর</div>
-                </div>
-                <div class="game-card" onclick="launchGame('Super Elements')">
-                    <img src="image_3.png" alt="Super Elements"><div class="game-title">সুপার এলিমেন্টস</div>
-                </div>
-                <div class="game-card" onclick="launchGame('Money Coming')">
-                    <img src="image_5.png" alt="Money Coming"><div class="game-title">মানি কামিং</div>
-                </div>
-                <div class="game-card" onclick="launchGame('7 Up 7 Down')">
-                    <img src="image_7.png" alt="7 Up 7 Down"><div class="game-title">সেভেন আপ সেভেন ডাউন</div>
-                </div>
-                <div class="game-card" onclick="launchGame('Super Ace Deluxe')">
-                    <img src="image_9.png" alt="Super Ace Deluxe"><div class="game-title">সুপার এস ডিলাক্স</div>
-                </div>
+    <!-- হেডার অংশ -->
+    <header>
+        <div class="logo">⚡ 1xbet</div>
+        <div class="auth-buttons">
+            <div id="userPanelInfo" class="user-panel-info">
+                👤 <span id="loggedUser"></span> | 💰 <span id="loggedBalance">0</span> ৳
+                <button onclick="logoutUser()" style="background:#d32f2f; color:#fff; border:none; padding:2px 6px; border-radius:3px; margin-left:5px; cursor:pointer;">লগআউট</button>
+            </div>
+            <div id="authBtnGroup">
+                <button class="btn-signup" onclick="showModal('signup')">Sign up</button>
+                <button class="btn-login" onclick="showModal('login')">Login</button>
             </div>
         </div>
+    </header>
+
+    <!-- নোটিশ বোর্ড -->
+    <div class="notice-board">
+        <marquee scrollamount="4">⚠️ নোটিশ: আইডি খুলতে বা পয়েন্ট রিচার্জ করতে অফিশিয়াল এজেন্ট (ID: RH45)-এর সাথে যোগাযোগ করুন!</marquee>
     </div>
 
-    <!-- Bottom Navigation Bar (No Deposit/Withdraw) -->
+    <!-- মূল গেম লিস্ট সেকশন -->
+    <div class="container" style="padding-bottom: 70px;">
+        <div class="section-title">Popular Games (<span id="game-count">0</span>)</div>
+        <div class="game-grid" id="game-container">
+            <!-- জাভাস্ক্রিপ্ট দিয়ে গেমগুলো লোড হবে -->
+        </div>
+    </div>
+
+    <!-- নিচের নেভিগেশন বার -->
     <div class="bottom-nav">
-        <div class="nav-item active" onclick="location.reload()"><span>🏠</span>হোম</div>
-        <div class="nav-item" onclick="alert('আইডি ও কয়েন নিতে এজেন্টের সাথে যোগাযোগ করুন।')"><span>🪙</span>কয়েন</div>
-        <div class="nav-item"><div class="nav-center-btn">🎁</div>প্রমোশন</div>
-        <div class="nav-item" onclick="openAccountPage()"><span>👤</span>সদস্য</div>
+        <div class="nav-item active"><span>🎮</span>Games</div>
+        <div class="nav-item" onclick="alert('স্পোর্টস সেকশন')"><span>🏆</span>Sports</div>
+        <div class="nav-item" onclick="alert('ইন-প্লে সেকশন')"><span>⏰</span>In-Play</div>
+        <div class="nav-item" onclick="location.reload()"><span>🏠</span>Home</div>
+        <div class="nav-item" onclick="openMemberAccount()"><span>👤</span>Account</div>
     </div>
 
-    <!-- Account / Member Page (With Bet History & ID Name) -->
-    <div id="account-page">
-        <div class="acc-header">
-            <span>👤 আইডি: <span id="acc-username" style="color: var(--accent-yellow);">guest</span></span>
-            <span>1XBET</span>
-        </div>
-        <div class="acc-menu-list">
-            <div class="acc-menu-item" onclick="alert('ব্যবহারকারী প্রোফাইল বিবরণ')">My Profile <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('বর্তমান কয়েন ব্যালেন্স ওভারভিউ')">Coin Overview <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('আপনার বেট এবং গেম খেলার হিস্টরি এখানে সংরক্ষিত আছে।')">My Bets / Game History <span>&gt;</span></div>
-        </div>
-        <div class="logout-btn-container">
-            <button class="logout-btn" onclick="logoutUser()">LOGOUT 🚪</button>
-        </div>
-        <div style="padding: 15px; text-align: center;">
-            <button onclick="closeAccountPage()" style="padding: 8px 20px; background: var(--1xbet-blue); color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">হোমে ফিরে যান</button>
+    <!-- কাস্টম পপআপ মডাল উইন্ডো -->
+    <div class="modal-overlay" id="customModal" onclick="hideModal(event)">
+        <div class="modal-box" id="modalBoxContent">
+            <!-- ডায়নামিক কনটেন্ট এখানে আসবে -->
         </div>
     </div>
 
-    <!-- Login Modal -->
-    <div class="modal-overlay" id="login-modal">
-        <div class="auth-box">
-            <h3>1XBET এজেন্ট আইডি লগইন</h3>
-            <input type="text" id="login-user" placeholder="আপনার ইউজারনেম / আইডি">
-            <input type="password" id="login-pass" placeholder="পাসওয়ার্ড">
-            <button onclick="handleLogin()">লগ ইন করুন</button>
-            <button onclick="document.getElementById('login-modal').style.display='none'" style="background:#334155; margin-top:8px;">বাতিল</button>
+    <!-- গেম খেলার ইন্টারফেস উইন্ডো (Game Arena) -->
+    <div id="gameArenaModal">
+        <div class="game-arena-header">
+            <span id="arenaGameTitle" style="font-weight: bold; color: #ffcc00; font-size: 16px;">Game Name</span>
+            <button class="modal-close-btn" onclick="closeGameArena()">X প্রস্থান</button>
         </div>
-    </div>
-
-    <!-- Registration / Sign Up Modal -->
-    <div class="modal-overlay" id="reg-modal">
-        <div class="auth-box">
-            <h3>আইডি খুলতে যোগাযোগ</h3>
-            <p style="font-size: 13px; color: var(--accent-yellow); margin-bottom: 15px; line-height: 1.5;">নতুন আইডি খুলতে এবং কয়েন নিতে সরাসরি এজেন্টের সাথে যোগাযোগ করুন। এজেন্ট আইডি খুলে দিলে সেই তথ্য দিয়ে লগইন করতে পারবেন।</p>
-            <button onclick="document.getElementById('reg-modal').style.display='none'" style="background:#334155;">বুঝেছি</button>
+        <div class="game-arena-body" id="gameArenaBodyContent">
+            <!-- গেমের ভেতরকার ইন্টারফেস ও স্পিন অপশন এখানে থাকবে -->
         </div>
-    </div>
-
-    <!-- Custom Alert Modal -->
-    <div class="alert-modal" id="custom-alert-modal">
-        <div class="alert-box">
-            <div class="alert-logo">🛡</div>
-            <div class="alert-text" id="alert-message-text">সঠিক তথ্য দিন</div>
-            <button class="alert-btn" onclick="closeCustomAlert()">ঠিক আছে</button>
-        </div>
-    </div>
-
-    <!-- Game Arena Modal -->
-    <div id="game-modal">
-        <div class="modal-header">
-            <span id="modal-game-title" style="font-weight: bold; color: var(--accent-yellow);">Game Arena</span>
-            <button class="close-btn" onclick="closeGame()">X প্রস্থান</button>
-        </div>
-        <div class="game-frame" id="game-content-area"></div>
     </div>
 
     <script>
-        // Firebase Configuration
+        // ==========================================
+        // ফায়ারবেস কনফিগারেশন ও ইনিশিয়ালাইজেশন
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyD-J8SXEEZhpj9wTZdoP2C...",
+            apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
             authDomain: "xbet-85104.firebaseapp.com",
             projectId: "xbet-85104",
-            storageBucket: "xbet-85104.appspot.com",
+            storageBucket: "xbet-85104.firebasestorage.app",
             messagingSenderId: "839557510948",
-            appId: "1:839557510948:web:a80ebd1604d2b79087c5b1"
+            appId: "1:839557510948:web:a80ebd160402b78087e5b1"
         };
-        
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let isLoggedIn = false;
-        let currentUserName = "";
-        let currentUserBalance = 0;
+        // ১০০+ গেমের ডাটা জেনারেটর
+        const baseImages = [
+            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80"
+        ];
 
-        function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
-        function openRegModal() { document.getElementById('reg-modal').style.display = 'flex'; }
-
-        function showCustomAlert(msg) {
-            document.getElementById('alert-message-text').innerText = msg;
-            document.getElementById('custom-alert-modal').style.display = 'flex';
+        const gamePrefixes = ["Aviator", "Teen Patti", "Ludo", "SicBo", "Color Game", "Plinko", "Dragon Tiger", "Baccarat", "Roulette", "Slot King", "Fruit Party", "Poker Star", "Penalty Shoot", "Dice Deluxe"];
+        
+        const gamesList = [];
+        for (let i = 1; i <= 120; i++) {
+            const prefix = gamePrefixes[(i - 1) % gamePrefixes.length];
+            gamesList.push({
+                name: `${prefix} ${i}`,
+                img: baseImages[(i - 1) % baseImages.length]
+            });
         }
 
-        function closeCustomAlert() {
-            document.getElementById('custom-alert-modal').style.display = 'none';
+        const gameContainer = document.getElementById('game-container');
+        document.getElementById('game-count').innerText = gamesList.length;
+
+        gamesList.forEach(game => {
+            const gameCard = document.createElement('div');
+            gameCard.className = 'game-card';
+            gameCard.innerHTML = `
+                <div class="game-thumb-container">
+                    <img src="${game.img}" alt="${game.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <div class="game-title">${game.name}</div>
+                    <button class="play-btn" onclick="playGame('${game.name}')">Play Now</button>
+                </div>
+            `;
+            gameContainer.appendChild(gameCard);
+        });
+
+        // লগইন চেক এবং ইউজার সেশন
+        window.onload = function() {
+            const savedUser = localStorage.getItem('xbet_logged_user');
+            if (savedUser) {
+                verifyAndShowUser(savedUser);
+            }
+        };
+
+        function verifyAndShowUser(username) {
+            db.collection("users").where("username", "==", username).get().then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    document.getElementById('authBtnGroup').style.display = 'none';
+                    document.getElementById('userPanelInfo').style.display = 'block';
+                    document.getElementById('loggedUser').innerText = userData.username;
+                    document.getElementById('loggedBalance').innerText = userData.balance || 0;
+                    localStorage.setItem('xbet_logged_user', userData.username);
+                } else {
+                    logoutUser();
+                }
+            });
         }
 
-        async function handleLogin() {
-            const userBox = document.getElementById('login-user').value.trim();
-            const passBox = document.getElementById('login-pass').value.trim();
-
-            if(!userBox || !passBox) {
-                showCustomAlert("দয়া করে সঠিক ইউজারনেম ও পাসওয়ার্ড দিন");
+        // গেম খেলার উইন্ডো বা ইন্টারফেস রান করা
+        function playGame(gameName) {
+            const savedUser = localStorage.getItem('xbet_logged_user');
+            if (!savedUser) {
+                showModal('message', 'গেম খেলতে প্রথমে আপনার অ্যাকাউন্টটি লগইন করুন!');
                 return;
             }
 
-            try {
-                const userRef = db.collection("users").doc(userBox);
-                const doc = await userRef.get();
-
-                if (!doc.exists) {
-                    showCustomAlert("এই আইডিটি রেজিস্টার্ড নয়। আইডি খুলতে এজেন্টের সাথে যোগাযোগ করুন।");
-                    return;
-                }
-
-                const userData = doc.data();
-                if (userData.password === passBox) {
-                    isLoggedIn = true;
-                    currentUserName = userBox;
-                    currentUserBalance = userData.balance || 0;
-                    
-                    document.getElementById('login-modal').style.display = 'none';
-                    updateAuthUI();
-                    alert('লগইন সফল হয়েছে!');
-                } else {
-                    showCustomAlert("দয়া করে সঠিক পাসওয়ার্ড দিন");
-                }
-            } catch (error) {
-                if(userBox === "agentadmin" && passBox === "12345") {
-                    isLoggedIn = true;
-                    currentUserName = userBox;
-                    currentUserBalance = 5000;
-                    document.getElementById('login-modal').style.display = 'none';
-                    updateAuthUI();
-                    alert('লগইন সফল হয়েছে!');
-                } else {
-                    showCustomAlert("দয়া করে সঠিক পাসওয়ার্ড দিন");
-                }
-            }
-        }
-
-        function updateAuthUI() {
-            if(isLoggedIn) {
-                document.getElementById('auth-buttons-container').style.display = 'none';
-                document.getElementById('user-panel-container').style.display = 'flex';
-                document.getElementById('user-bal').innerText = currentUserBalance.toFixed(2);
-                document.getElementById('acc-username').innerText = currentUserName;
-            }
-        }
-
-        function openAccountPage() {
-            if(!isLoggedIn) {
-                openLoginModal();
-                return;
-            }
-            document.getElementById('account-page').style.display = 'block';
-        }
-        function closeAccountPage() {
-            document.getElementById('account-page').style.display = 'none';
-        }
-        function logoutUser() {
-            if(confirm('আপনি কি লগআউট করতে চান?')) {
-                isLoggedIn = false;
-                document.getElementById('auth-buttons-container').style.display = 'flex';
-                document.getElementById('user-panel-container').style.display = 'none';
-                closeAccountPage();
-                alert('সফলভাবে লগআউট করা হয়েছে!');
-            }
-        }
-
-        function launchGame(gameName) {
-            document.getElementById('modal-game-title').innerText = gameName;
-            document.getElementById('game-modal').style.display = 'flex';
-            const area = document.getElementById('game-content-area');
+            document.getElementById('arenaGameTitle').innerText = gameName;
+            document.getElementById('gameArenaModal').style.display = 'flex';
             
-            if(gameName === 'Aviator') {
-                area.innerHTML = `<div style="text-align:center; color:#fff;"><h2>🚀 Aviator Game</h2><p style="font-size:24px; color:var(--accent-yellow); margin:20px 0;">মাল্টিপ্লায়ার: <span id="aviator-mult">1.00x</span></p><button onclick="alert('বেট সফল!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:18px; border-radius:5px; cursor:pointer; font-weight:bold;">স্পিন / স্টার্ট</button></div>`;
+            const arenaBody = document.getElementById('gameArenaBodyContent');
+            
+            if (gameName.includes('Aviator')) {
+                arenaBody.innerHTML = `
+                    <div style="color:#fff;">
+                        <h2 style="color:#ffcc00; margin-bottom:10px;">🚀 Aviator Flight Simulation</h2>
+                        <p style="font-size:24px; color:#ffcc00; margin:20px 0;">মাল্টিপ্লায়ার: <span id="aviatorMultiplier">1.00x</span></p>
+                        <p style="font-size:13px; color:#aaa; margin-bottom:20px;">প্লেন ওড়ার আগে ক্যাশআউট করুন!</p>
+                        <button onclick="alert('সফলভাবে ক্যাশআউট করা হয়েছে!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:16px; font-weight:bold; border-radius:5px; cursor:pointer;">CASHOUT / বেট করুন</button>
+                    </div>
+                `;
             } else {
-                area.innerHTML = `<div style="text-align:center;"><h2 style="color:var(--accent-yellow); margin-bottom:15px;">${gameName}</h2><img src="image_9.png" style="max-height:70vh; max-width:100%; border-radius:8px;" alt="${gameName}"><br><button onclick="alert('গেমপ্লে সফল!')" style="margin-top:15px; padding:12px 30px; background:var(--1xbet-blue); color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">স্পিন করুন</button></div>`;
+                arenaBody.innerHTML = `
+                    <div style="max-width:350px; width:100%;">
+                        <h2 style="color:#ffcc00; margin-bottom:15px;">${gameName}</h2>
+                        <div style="background:#1a2332; padding:15px; border-radius:8px; border:1px solid #30363d; margin-bottom:15px;">
+                            <p style="font-size:14px; color:#ccc; margin-bottom:10px;">আপনার অ্যাকাউন্ট ব্যালেন্স থেকে পয়েন্ট ব্যবহার করে গেমটি সচল রয়েছে।</p>
+                            <button onclick="alert('${gameName} স্পিন সফল হয়েছে!')" style="width:100%; padding:12px; background:linear-gradient(to bottom, #ffd700, #ffaa00); color:#000; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:15px;">স্পিন করুন / Spin</button>
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        function closeGame() {
-            document.getElementById('game-modal').style.display = 'none';
-            document.getElementById('game-content-area').innerHTML = '';
+        function closeGameArena() {
+            document.getElementById('gameArenaModal').style.display = 'none';
+            document.getElementById('gameArenaBodyContent').innerHTML = '';
+        }
+
+        // মেম্বার বা অ্যাকাউন্ট অপশন ক্লিক করলে বেট হিস্টরি সহ পপআপ আসবে
+        function openMemberAccount() {
+            const savedUser = localStorage.getItem('xbet_logged_user');
+            if (!savedUser) {
+                showModal('login');
+                return;
+            }
+
+            db.collection("users").where("username", "==", savedUser).get().then((querySnapshot) => {
+                let balance = 0;
+                if (!querySnapshot.empty) {
+                    balance = querySnapshot.docs[0].data().balance || 0;
+                }
+
+                const modalBox = document.getElementById('modalBoxContent');
+                modalBox.innerHTML = `
+                    <div class="modal-logo">👤 সদস্য অ্যাকাউন্ট প্যানেল</div>
+                    <div style="text-align: left; background: #0d1117; padding: 12px; border-radius: 6px; border: 1px solid #30363d; margin-bottom: 15px;">
+                        <p style="font-size: 13px; color: #ccc;">ইউজার আইডি: <span style="color:#ffcc00; font-weight:bold;">${savedUser}</span></p>
+                        <p style="font-size: 13px; color: #ccc; margin-top:5px;">বর্তমান ব্যালেন্স: <span style="color:#2ecc71; font-weight:bold;">${balance} ৳</span></p>
+                        <p style="font-size: 13px; color: #ccc; margin-top:5px;">নিযুক্ত এজেন্ট: <span style="color:#ffcc00; font-weight:bold;">RH45</span></p>
+                    </div>
+                    <div class="section-title" style="font-size: 14px; text-align: left; margin-bottom: 8px;">📊 বেট ও গেম হিস্টরি (Bet History)</div>
+                    <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 10px; max-height: 150px; overflow-y: auto; text-align: left; margin-bottom: 15px; font-size: 12px;">
+                        <div style="border-bottom: 1px solid #222; padding: 6px 0; color: #aaa;">🎮 Aviator - বেট: ১০০ ৳ | জয়: +১৫০ ৳</div>
+                        <div style="border-bottom: 1px solid #222; padding: 6px 0; color: #aaa;">🎰 Super Ace - বেট: ৫০ ৳ | হার: -৫০ ৳</div>
+                        <div style="padding: 6px 0; color: #aaa;">🎲 Teen Patti - বেট: ২০০ ৳ | জয়: +৪০০ ৳</div>
+                    </div>
+                    <button class="modal-close-btn" onclick="closeModal()" style="width:100%;">বন্ধ করুন</button>
+                `;
+                document.getElementById('customModal').style.display = 'flex';
+            });
+        }
+
+        function checkAccountStatus() {
+            openMemberAccount();
+        }
+
+        // মডাল হ্যান্ডলিং (লগইন, সাইনআপ ও মেসেজ)
+        function showModal(type, customMsg = '') {
+            const modalBox = document.getElementById('modalBoxContent');
+            
+            if (type === 'login') {
+                modalBox.innerHTML = `
+                    <div class="modal-logo">⚡ 1xbet Login</div>
+                    <div class="form-group">
+                        <label>ইউজারনেম</label>
+                        <input type="text" id="loginUsername" class="form-control" placeholder="আপনার ইউজারনেম দিন">
+                    </div>
+                    <div class="form-group">
+                        <label>পাসওয়ার্ড</label>
+                        <input type="password" id="loginPassword" class="form-control" placeholder="আপনার পাসওয়ার্ড দিন">
+                    </div>
+                    <button class="modal-action-btn" onclick="executeLogin()">লগইন করুন</button>
+                    <button class="modal-close-btn" onclick="closeModal()" style="margin-top:10px; width:100%;">বন্ধ করুন</button>
+                `;
+            } else if (type === 'signup') {
+                modalBox.innerHTML = `
+                    <div class="modal-logo">⚡ 1xbet Sign Up</div>
+                    <div class="modal-text" style="margin-bottom:10px;">নতুন আইডি খুলতে বা এজেন্টের নির্দিষ্ট পয়েন্ট নিতে অনুগ্রহ করে আমাদের অফিশিয়াল এজেন্টের সাথে যোগাযোগ করুন。<br><b>এজেন্ট আইডি: RH45</b></div>
+                    <button class="modal-close-btn" onclick="closeModal()" style="width:100%;">ঠিক আছে</button>
+                `;
+            } else {
+                modalBox.innerHTML = `
+                    <div class="modal-logo">⚡ 1xbet</div>
+                    <div class="modal-text">${customMsg}</div>
+                    <button class="modal-close-btn" onclick="closeModal()" style="width:100%;">ঠিক আছে</button>
+                `;
+            }
+
+            document.getElementById('customModal').style.display = 'flex';
+        }
+
+        function executeLogin() {
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+
+            if (!u || !p) {
+                alert('দয়া করে ইউজারনেম এবং পাসওয়ার্ড উভয়ই দিন!');
+                return;
+            }
+
+            db.collection("users").where("username", "==", u).get().then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    alert('এই নামের কোনো ইউজার পাওয়া যায়নি! এজেন্ট থেকে আইডি তৈরি করে নিন।');
+                } else {
+                    let userFound = false;
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.password === p) {
+                            userFound = true;
+                            localStorage.setItem('xbet_logged_user', data.username);
+                            closeModal();
+                            verifyAndShowUser(data.username);
+                            alert('লগইন সফল হয়েছে!');
+                        }
+                    });
+                    if (!userFound) {
+                        alert('ভুল পাসওয়ার্ড দেওয়া হয়েছে!');
+                    }
+                }
+            }).catch((error) => {
+                console.error("Error logging in: ", error);
+                alert('লগইন করার সময় সমস্যা হয়েছে। দয়া করে আবার চেষ্টা করুন।');
+            });
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('xbet_logged_user');
+            document.getElementById('userPanelInfo').style.display = 'none';
+            document.getElementById('authBtnGroup').style.display = 'flex';
+            alert('সফলভাবে লগআউট করা হয়েছে।');
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        function hideModal(event) {
+            if (event.target.id === 'customModal') {
+                closeModal();
+            }
         }
     </script>
 </body>
