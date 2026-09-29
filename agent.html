@@ -74,7 +74,7 @@
             font-size: 13px;
             color: #8b949e;
         }
-        input {
+        input, select {
             width: 100%;
             padding: 8px 10px;
             background-color: #0d1117;
@@ -83,7 +83,7 @@
             border-radius: 4px;
             font-size: 14px;
         }
-        input:focus {
+        input:focus, select:focus {
             border-color: #ffcc00;
             outline: none;
         }
@@ -123,8 +123,6 @@
             background-color: #21262d;
             color: #ffcc00;
         }
-        .win { color: #238636; font-weight: bold; }
-        .loss { color: #d32f2f; font-weight: bold; }
     </style>
 
     <!-- ফায়ারবেস SDK (Compat Version) -->
@@ -152,9 +150,8 @@
     <div class="container" id="dashboardSection">
         <h2>⚡ 1xbet Agent Control Panel</h2>
 
-        <!-- এজেন্টের নিজের পয়েন্ট দেখার বক্স -->
         <div class="balance-box">
-            এজেন্টের বর্তমান ব্যালেন্স / পয়েন্ট: <span id="agentCurrentBalance">৫০,০০০ পয়েন্ট</span>
+            এজেন্ট আইডি: <span id="agentIdDisplay">RH45</span>
         </div>
 
         <!-- নতুন আইডি তৈরি সেকশন -->
@@ -175,31 +172,60 @@
             <button class="btn" onclick="createAccount()">আইডি তৈরি করুন</button>
         </div>
 
-        <!-- ইউজার পাসওয়ার্ড ও ব্যালেন্স লিস্ট (এজেন্ট দেখতে পারবে) -->
+        <!-- ইউজার ব্যালেন্স যোগ বা কেটে নেওয়ার সেকশন -->
         <div class="card">
-            <h3>ইউজার লিস্ট ও পাসওয়ার্ড চেক</h3>
+            <h3>ইউজারের ব্যালেন্স অ্যাড বা কেটে নিন</h3>
+            <div class="form-group">
+                <label>ইউজার আইডি:</label>
+                <input type="text" id="targetUser" placeholder="ইউজার আইডি দিন">
+            </div>
+            <div class="form-group">
+                <label>অপারেশন সিলেক্ট করুন:</label>
+                <select id="actionType">
+                    <option value="add">পয়েন্ট যোগ করুন (Deposit)</option>
+                    <option value="sub">পয়েন্ট কেটে নিন (Withdraw)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>পয়েন্ট পরিমাণ:</label>
+                <input type="number" id="targetPoints" placeholder="পরিমাণ দিন">
+            </div>
+            <button class="btn" onclick="updateUserBalance()">ব্যালেন্স আপডেট করুন</button>
+        </div>
+
+        <!-- ইউজার পাসওয়ার্ড পরিবর্তনের সেকশন -->
+        <div class="card">
+            <h3>ইউজারের পাসওয়ার্ড পরিবর্তন করুন</h3>
+            <div class="form-group">
+                <label>ইউজার আইডি:</label>
+                <input type="text" id="passTargetUser" placeholder="ইউজার আইডি দিন">
+            </div>
+            <div class="form-group">
+                <label>নতুন পাসওয়ার্ড:</label>
+                <input type="text" id="newPasswordInput" placeholder="নতুন পাসওয়ার্ড দিন">
+            </div>
+            <button class="btn" onclick="updateUserPassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
+        </div>
+
+        <!-- ইউজার লিস্ট ও পাসওয়ার্ড চেক -->
+        <div class="card">
+            <h3>ইউজার লিস্ট ও ডাটা</h3>
             <table>
-                <tr>
-                    <th>ইউজার আইডি</th>
-                    <th>পাসওয়ার্ড</th>
-                    <th>ব্যালেন্স</th>
-                </tr>
-                <tr>
-                    <td>user_kamal</td>
-                    <td>kamal123</td>
-                    <td>৫,০০০ পয়েন্ট</td>
-                </tr>
-                <tr>
-                    <td>player_sakib</td>
-                    <td>sakib999</td>
-                    <td>২,৫০০ পয়েন্ট</td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>ইউজার আইডি</th>
+                        <th>পাসওয়ার্ড</th>
+                        <th>ব্যালেন্স</th>
+                    </tr>
+                </thead>
+                <tbody id="userTableBody">
+                    <!-- ফায়ারবেস থেকে ডাটা ডাইনামিক লোড হবে -->
+                </tbody>
             </table>
         </div>
     </div>
 
     <script>
-        // আপনার সঠিক ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
             apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
             authDomain: "xbet-85104.firebaseapp.com",
@@ -209,7 +235,6 @@
             appId: "1:839557510948:web:a80ebd160402b78087e5b1"
         };
 
-        // ফায়ারবেস এবং ডাটাবেজ ইনিশিয়ালাইজেশন
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
@@ -217,33 +242,136 @@
         const correctAgentPass = "Pass.Rohit@sharma45";
 
         function agentLogin() {
-            const user = document.getElementById('agentUsername').value;
-            const pass = document.getElementById('agentPassword').value;
+            const user = document.getElementById('agentUsername').value.trim();
+            const pass = document.getElementById('agentPassword').value.trim();
             const errorBox = document.getElementById('loginError');
 
             if (user === correctAgentUser && pass === correctAgentPass) {
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
+                loadUsersTable();
             } else {
                 errorBox.innerText = "ভুল এজেন্ট আইডি অথবা পাসওয়ার্ড!";
             }
         }
 
+        // নতুন অ্যাকাউন্ট তৈরি ফায়ারবেসে সেভ করা
         function createAccount() {
-            const user = document.getElementById('agentUser').value;
-            const pass = document.getElementById('agentPass').value;
-            const points = document.getElementById('agentPoints').value;
+            const user = document.getElementById('agentUser').value.trim();
+            const pass = document.getElementById('agentPass').value.trim();
+            const points = Number(document.getElementById('agentPoints').value);
 
-            if(!user || !pass || !points) {
+            if(!user || !pass || isNaN(points)) {
                 alert("সবগুলো ঘর সঠিকভাবে পূরণ করুন!");
                 return;
             }
 
-            // চাইলে ফায়ারস্টোর ডাটাবেজে ইউজার সেভ করার কোড এখানে যুক্ত করা যাবে
-            alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট তৈরি করা হয়েছে।`);
-            document.getElementById('agentUser').value = "";
-            document.getElementById('agentPass').value = "";
-            document.getElementById('agentPoints').value = "";
+            db.collection("users").add({
+                username: user,
+                password: pass,
+                balance: points,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            })
+            .then(() => {
+                alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট তৈরি করা হয়েছে।`);
+                document.getElementById('agentUser').value = "";
+                document.getElementById('agentPass').value = "";
+                document.getElementById('agentPoints').value = "";
+                loadUsersTable();
+            })
+            .catch((error) => {
+                alert("এরর: " + error.message);
+            });
+        }
+
+        // ইউজারের ব্যালেন্স যোগ বা কেটে নেওয়া
+        function updateUserBalance() {
+            const targetUser = document.getElementById('targetUser').value.trim();
+            const actionType = document.getElementById('actionType').value;
+            const points = Number(document.getElementById('targetPoints').value);
+
+            if (!targetUser || isNaN(points) || points <= 0) {
+                alert("সঠিক ইউজার আইডি এবং পয়েন্টের পরিমাণ দিন!");
+                return;
+            }
+
+            db.collection("users").where("username", "==", targetUser).get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    alert("এই নামের কোনো ইউজার পাওয়া যায়নি!");
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const currentBalance = Number(doc.data().balance || 0);
+                    let newBalance = actionType === 'add' ? currentBalance + points : currentBalance - points;
+
+                    if (newBalance < 0) {
+                        alert("ইউজারের পর্যাপ্ত ব্যালেন্স নেই, এত পয়েন্ট কাটা যাবে না!");
+                        return;
+                    }
+
+                    db.collection("users").doc(doc.id).update({
+                        balance: newBalance
+                    })
+                    .then(() => {
+                        alert(`সফলভাবে ব্যালেন্স আপডেট করা হয়েছে! নতুন ব্যালেন্স: ${newBalance} পয়েন্ট`);
+                        document.getElementById('targetUser').value = "";
+                        document.getElementById('targetPoints').value = "";
+                        loadUsersTable();
+                    });
+                });
+            });
+        }
+
+        // ইউজারের পাসওয়ার্ড পরিবর্তন করা
+        function updateUserPassword() {
+            const targetUser = document.getElementById('passTargetUser').value.trim();
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+
+            if (!targetUser || !newPass) {
+                alert("ইউজার আইডি এবং নতুন পাসওয়ার্ড দিন!");
+                return;
+            }
+
+            db.collection("users").where("username", "==", targetUser).get()
+            .then((querySnapshot) => {
+                if (querySnapshot.empty) {
+                    alert("এই নামের কোনো ইউজার পাওয়া যায়নি!");
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    db.collection("users").doc(doc.id).update({
+                        password: newPass
+                    })
+                    .then(() => {
+                        alert(`সফল! ${targetUser} এর পাসওয়ার্ড পরিবর্তন করে নতুন পাসওয়ার্ড সেট করা হয়েছে।`);
+                        document.getElementById('passTargetUser').value = "";
+                        document.getElementById('newPasswordInput').value = "";
+                        loadUsersTable();
+                    });
+                });
+            });
+        }
+
+        // টেবিলের মধ্যে ফায়ারবেসের সমস্ত ইউজারের ডাটা লোড করা
+        function loadUsersTable() {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = "";
+
+            db.collection("users").get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${data.username}</td>
+                        <td>${data.password}</td>
+                        <td>${data.balance || 0} পয়েন্ট</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
         }
     </script>
 </body>
