@@ -127,6 +127,7 @@
         .loss { color: #d32f2f; font-weight: bold; }
     </style>
 
+    <!-- ফায়ারবেস SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
@@ -198,16 +199,19 @@
     </div>
 
     <script>
+        // আপনার সঠিক ফায়ারবেস কনফিগারেশন
         const firebaseConfig = {
-            apiKey: "YOUR_FIREBASE_API_KEY",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
+            authDomain: "xbet-85104.firebaseapp.com",
+            projectId: "xbet-85104",
+            storageBucket: "xbet-85104.firebasestorage.app",
+            messagingSenderId: "839557510948",
+            appId: "1:839557510948:web:a80ebd160402b78087e5b1"
         };
-        // firebase.initializeApp(firebaseConfig);
-        // const db = firebase.firestore();
+
+        // ফায়ারবেস এবং ডাটাবেজ ইনিশিয়ালাইজেশন
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         const correctAgentUser = "RH45";
         const correctAgentPass = "Pass.Rohit@sharma45";
@@ -235,6 +239,7 @@
                 return;
             }
 
+            // চাইলে ফায়ারস্টোর ডাটাবেজে ইউজার সেভ করার কোড এখানে যুক্ত করা যাবে
             alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট তৈরি করা হয়েছে।`);
             document.getElementById('agentUser').value = "";
             document.getElementById('agentPass').value = "";
