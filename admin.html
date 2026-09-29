@@ -215,17 +215,30 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // ফায়ারবেসে এজেন্টের তথ্য আপডেট করার ফাংশন
         function updateAgent() {
-            const id = document.getElementById('adminAgentId').value;
-            const pass = document.getElementById('adminAgentPass').value;
-            const points = document.getElementById('adminAgentPoints').value;
+            const id = document.getElementById('adminAgentId').value.trim();
+            const pass = document.getElementById('adminAgentPass').value.trim();
+            const points = Number(document.getElementById('adminAgentPoints').value);
 
-            if(!pass || !points) {
-                alert("পাসওয়ার্ড এবং পয়েন্ট উভয় ঘর পূরণ করুন!");
+            if(!id || !pass || isNaN(points)) {
+                alert("সবগুলো ঘর সঠিকভাবে পূরণ করুন!");
                 return;
             }
-            document.getElementById('msgAgent').innerText = `সফল! '${id}' এর পাসওয়ার্ড ও নতুন ${points} পয়েন্ট বরাদ্দ করা হয়েছে।`;
-            document.getElementById('adminAgentPass').value = "";
+
+            db.collection("agents").doc(id).set({
+                agentId: id,
+                password: pass,
+                balance: points,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true })
+            .then(() => {
+                document.getElementById('msgAgent').innerText = `সফল! '${id}' এর পাসওয়ার্ড ও নতুন ${points} পয়েন্ট ফায়ারবেসে আপডেট করা হয়েছে।`;
+                document.getElementById('adminAgentPass').value = "";
+            })
+            .catch((error) => {
+                alert("এরর: " + error.message);
+            });
         }
 
         function updateWinRate() {
