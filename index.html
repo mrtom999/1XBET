@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1xBet - Official Gaming Platform</title>
+    <title>1XBET - Official Gaming Platform</title>
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -18,7 +18,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--1xbet-dark); color: #fff; padding-bottom: 75px; }
         
-        /* 1xBet Top Header (Clean & No Extra Text) */
+        /* 1xBet Top Header */
         .header { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px 15px; border-bottom: 2px solid var(--1xbet-blue); position: sticky; top: 0; z-index: 1000; }
         .logo-1xbet { font-size: 20px; font-weight: 900; color: #fff; font-style: italic; letter-spacing: 1px; }
         .logo-1xbet span { color: var(--1xbet-blue); background: #fff; padding: 0 4px; border-radius: 3px; font-style: normal; }
@@ -57,19 +57,19 @@
         .game-card img { width: 100%; height: 95px; object-fit: cover; }
         .game-title { padding: 6px; font-size: 11px; font-weight: 600; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Bottom Navigation Bar */
+        /* Bottom Navigation Bar (No Deposit/Withdraw) */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #333; z-index: 1000; }
         .nav-item { text-align: center; color: #999; font-size: 10px; cursor: pointer; text-decoration: none; flex: 1; }
         .nav-item.active, .nav-item:hover { color: #fff; }
         .nav-item span { display: block; font-size: 18px; margin-bottom: 2px; }
         .nav-center-btn { background: linear-gradient(135deg, #f39c12, #e67e22); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: -18px auto 2px; color: #000; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid #1a1a1a; }
 
-        /* Account Page */
-        #account-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; color: #333; z-index: 2000; overflow-y: auto; }
-        .acc-header { background: #0c1b2a; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .acc-menu-list { background: #fff; margin-top: 10px; }
-        .acc-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 15px; font-weight: 500; cursor: pointer; }
-        .logout-btn-container { padding: 20px; background: #fff; margin-top: 15px; }
+        /* Account / Member Page */
+        #account-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #121212; color: #fff; z-index: 2000; overflow-y: auto; }
+        .acc-header { background: #1f1f1f; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; border-bottom: 1px solid #333; }
+        .acc-menu-list { background: #1a1a1a; margin-top: 10px; }
+        .acc-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #2a2a2a; color: #ddd; font-size: 14px; font-weight: 500; cursor: pointer; }
+        .logout-btn-container { padding: 20px; background: #1a1a1a; margin-top: 15px; }
         .logout-btn { width: 100%; background: var(--danger-color); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
 
         /* Auth Modals */
@@ -79,7 +79,7 @@
         .auth-box input { width: 100%; padding: 10px; margin-bottom: 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; outline: none; }
         .auth-box button { width: 100%; padding: 10px; background: var(--1xbet-blue); color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 5px; }
         
-        /* Custom Alert / Error Message Modal */
+        /* Custom Alert Modal */
         .alert-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; align-items: center; }
         .alert-box { background: #1e293b; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; border: 2px solid var(--accent-yellow); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
         .alert-logo { font-size: 35px; margin-bottom: 10px; color: var(--accent-yellow); }
@@ -103,7 +103,7 @@
             <button class="btn-reg" onclick="openRegModal()">সাইন আপ</button>
         </div>
         <div class="user-panel" id="user-panel-container" style="display:none;">
-            <span>💰 <span id="user-bal">0.00</span> BDT</span>
+            <span>🪙 <span id="user-bal">0.00</span> কয়েন</span>
         </div>
     </div>
 
@@ -153,39 +153,38 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Navigation Bar (No Deposit/Withdraw) -->
     <div class="bottom-nav">
         <div class="nav-item active" onclick="location.reload()"><span>🏠</span>হোম</div>
-        <div class="nav-item" onclick="alert('ডিপোজিট উইন্ডো')"><span>💰</span>ডিপোজিট</div>
+        <div class="nav-item" onclick="alert('আইডি ও কয়েন নিতে এজেন্টের সাথে যোগাযোগ করুন।')"><span>🪙</span>কয়েন</div>
         <div class="nav-item"><div class="nav-center-btn">🎁</div>প্রমোশন</div>
-        <div class="nav-item" onclick="alert('উত্তোলন উইন্ডো')"><span>💵</span>উত্তোলন করুন</div>
         <div class="nav-item" onclick="openAccountPage()"><span>👤</span>সদস্য</div>
     </div>
 
-    <!-- Account Page -->
+    <!-- Account / Member Page (With Bet History & ID Name) -->
     <div id="account-page">
         <div class="acc-header">
-            <span>👤 <span id="acc-username">guest</span></span>
-            <span>GMT+6:0</span>
+            <span>👤 আইডি: <span id="acc-username" style="color: var(--accent-yellow);">guest</span></span>
+            <span>1XBET</span>
         </div>
         <div class="acc-menu-list">
-            <div class="acc-menu-item" onclick="alert('প্রোফাইল বিবরণ')">My Profile <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('ব্যালেন্স ওভারভিউ')">Balance Overview <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('বেট হিস্টরি')">My Bets <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('ব্যবহারকারী প্রোফাইল বিবরণ')">My Profile <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('বর্তমান কয়েন ব্যালেন্স ওভারভিউ')">Coin Overview <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('আপনার বেট এবং গেম খেলার হিস্টরি এখানে সংরক্ষিত আছে।')">My Bets / Game History <span>&gt;</span></div>
         </div>
         <div class="logout-btn-container">
             <button class="logout-btn" onclick="logoutUser()">LOGOUT 🚪</button>
         </div>
         <div style="padding: 15px; text-align: center;">
-            <button onclick="closeAccountPage()" style="padding: 8px 20px; background: #0c1b2a; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">হোমে ফিরে যান</button>
+            <button onclick="closeAccountPage()" style="padding: 8px 20px; background: var(--1xbet-blue); color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">হোমে ফিরে যান</button>
         </div>
     </div>
 
     <!-- Login Modal -->
     <div class="modal-overlay" id="login-modal">
         <div class="auth-box">
-            <h3>1xBet লগ ইন</h3>
-            <input type="text" id="login-user" placeholder="ইউজারনেম / আইডি">
+            <h3>1XBET এজেন্ট আইডি লগইন</h3>
+            <input type="text" id="login-user" placeholder="আপনার ইউজারনেম / আইডি">
             <input type="password" id="login-pass" placeholder="পাসওয়ার্ড">
             <button onclick="handleLogin()">লগ ইন করুন</button>
             <button onclick="document.getElementById('login-modal').style.display='none'" style="background:#334155; margin-top:8px;">বাতিল</button>
@@ -195,17 +194,17 @@
     <!-- Registration / Sign Up Modal -->
     <div class="modal-overlay" id="reg-modal">
         <div class="auth-box">
-            <h3>সাইন আপ (একাউন্ট তৈরি)</h3>
-            <p style="font-size: 13px; color: #f39c12; margin-bottom: 15px; line-height: 1.5;">আইডি খুলতে এজেন্টের সাথে যোগাযোগ করুন। এজেন্ট আপনার অ্যাকাউন্ট তৈরি করে দিলে সেই আইডি ও পাসওয়ার্ড দিয়ে লগইন করতে পারবেন।</p>
+            <h3>আইডি খুলতে যোগাযোগ</h3>
+            <p style="font-size: 13px; color: var(--accent-yellow); margin-bottom: 15px; line-height: 1.5;">নতুন আইডি খুলতে এবং কয়েন নিতে সরাসরি এজেন্টের সাথে যোগাযোগ করুন। এজেন্ট আইডি খুলে দিলে সেই তথ্য দিয়ে লগইন করতে পারবেন।</p>
             <button onclick="document.getElementById('reg-modal').style.display='none'" style="background:#334155;">বুঝেছি</button>
         </div>
     </div>
 
-    <!-- Custom Alert Modal (For Incorrect Password / Error) -->
+    <!-- Custom Alert Modal -->
     <div class="alert-modal" id="custom-alert-modal">
         <div class="alert-box">
             <div class="alert-logo">🛡</div>
-            <div class="alert-text" id="alert-message-text">দয়া করে সঠিক পাসওয়ার্ড দিন</div>
+            <div class="alert-text" id="alert-message-text">সঠিক তথ্য দিন</div>
             <button class="alert-btn" onclick="closeCustomAlert()">ঠিক আছে</button>
         </div>
     </div>
@@ -220,7 +219,7 @@
     </div>
 
     <script>
-        // Firebase Configuration (Updated with your project details)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyD-J8SXEEZhpj9wTZdoP2C...",
             authDomain: "xbet-85104.firebaseapp.com",
@@ -330,9 +329,9 @@
             const area = document.getElementById('game-content-area');
             
             if(gameName === 'Aviator') {
-                area.innerHTML = `<div style="text-align:center; color:#fff;"><h2>🚀 Aviator Flight Simulation</h2><p style="font-size:24px; color:#f39c12; margin:20px 0;">মাল্টিপ্লায়ার: <span id="aviator-mult">1.00x</span></p><button onclick="alert('ক্যাশআউট সফল!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:18px; border-radius:5px; cursor:pointer; font-weight:bold;">CASHOUT</button></div>`;
+                area.innerHTML = `<div style="text-align:center; color:#fff;"><h2>🚀 Aviator Game</h2><p style="font-size:24px; color:var(--accent-yellow); margin:20px 0;">মাল্টিপ্লায়ার: <span id="aviator-mult">1.00x</span></p><button onclick="alert('বেট সফল!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:18px; border-radius:5px; cursor:pointer; font-weight:bold;">স্পিন / স্টার্ট</button></div>`;
             } else {
-                area.innerHTML = `<div style="text-align:center;"><h2 style="color:var(--accent-yellow); margin-bottom:15px;">${gameName}</h2><img src="image_9.png" style="max-height:70vh; max-width:100%; border-radius:8px;" alt="${gameName}"><br><button onclick="alert('গেমপ্লে সফল!')" style="margin-top:15px; padding:12px 30px; background:var(--1xbet-blue); color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">স্পিন / খেলুন</button></div>`;
+                area.innerHTML = `<div style="text-align:center;"><h2 style="color:var(--accent-yellow); margin-bottom:15px;">${gameName}</h2><img src="image_9.png" style="max-height:70vh; max-width:100%; border-radius:8px;" alt="${gameName}"><br><button onclick="alert('গেমপ্লে সফল!')" style="margin-top:15px; padding:12px 30px; background:var(--1xbet-blue); color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">স্পিন করুন</button></div>`;
             }
         }
 
