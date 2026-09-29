@@ -255,7 +255,7 @@
             }
         }
 
-        // নতুন অ্যাকাউন্ট তৈরি ফায়ারবেসে সেভ করা
+        // ফায়ারবেসে নতুন ইউজার অ্যাকাউন্ট সেভ করা
         function createAccount() {
             const user = document.getElementById('agentUser').value.trim();
             const pass = document.getElementById('agentPass').value.trim();
@@ -273,18 +273,18 @@
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             })
             .then(() => {
-                alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট তৈরি করা হয়েছে।`);
+                alert(`সফল! ইউজার আইডি: ${user} তৈরি করা হয়েছে।`);
                 document.getElementById('agentUser').value = "";
                 document.getElementById('agentPass').value = "";
                 document.getElementById('agentPoints').value = "";
-                loadUsersTable();
+                loadUsersTable(); // লিস্ট রিফ্রেশ করবে
             })
             .catch((error) => {
                 alert("এরর: " + error.message);
             });
         }
 
-        // ইউজারের ব্যালেন্স যোগ বা কেটে নেওয়া
+        // ব্যালেন্স যোগ বা কেটে নেওয়া
         function updateUserBalance() {
             const targetUser = document.getElementById('targetUser').value.trim();
             const actionType = document.getElementById('actionType').value;
@@ -307,7 +307,7 @@
                     let newBalance = actionType === 'add' ? currentBalance + points : currentBalance - points;
 
                     if (newBalance < 0) {
-                        alert("ইউজারের পর্যাপ্ত ব্যালেন্স নেই, এত পয়েন্ট কাটা যাবে না!");
+                        alert("ইউজারের পর্যাপ্ত ব্যালেন্স নেই!");
                         return;
                     }
 
@@ -315,7 +315,7 @@
                         balance: newBalance
                     })
                     .then(() => {
-                        alert(`সফলভাবে ব্যালেন্স আপডেট করা হয়েছে! নতুন ব্যালেন্স: ${newBalance} পয়েন্ট`);
+                        alert(`সফল! নতুন ব্যালেন্স: ${newBalance} পয়েন্ট`);
                         document.getElementById('targetUser').value = "";
                         document.getElementById('targetPoints').value = "";
                         loadUsersTable();
@@ -324,7 +324,7 @@
             });
         }
 
-        // ইউজারের পাসওয়ার্ড পরিবর্তন করা
+        // পাসওয়ার্ড পরিবর্তন করা
         function updateUserPassword() {
             const targetUser = document.getElementById('passTargetUser').value.trim();
             const newPass = document.getElementById('newPasswordInput').value.trim();
@@ -346,7 +346,7 @@
                         password: newPass
                     })
                     .then(() => {
-                        alert(`সফল! ${targetUser} এর পাসওয়ার্ড পরিবর্তন করে নতুন পাসওয়ার্ড সেট করা হয়েছে।`);
+                        alert(`সফল! ${targetUser} এর পাসওয়ার্ড পরিবর্তন করা হয়েছে।`);
                         document.getElementById('passTargetUser').value = "";
                         document.getElementById('newPasswordInput').value = "";
                         loadUsersTable();
@@ -355,7 +355,7 @@
             });
         }
 
-        // টেবিলের মধ্যে ফায়ারবেসের সমস্ত ইউজারের ডাটা লোড করা
+        // ডাটাবেজ থেকে ইউজার টেবিল লোড করা
         function loadUsersTable() {
             const tbody = document.getElementById('userTableBody');
             tbody.innerHTML = "";
@@ -371,6 +371,8 @@
                     `;
                     tbody.appendChild(tr);
                 });
+            }).catch((error) => {
+                console.error("টেবিল লোড করতে সমস্যা হচ্ছে: ", error);
             });
         }
     </script>
