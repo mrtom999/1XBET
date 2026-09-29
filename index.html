@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1xbet - Online Gaming Platform</title>
+    <title>1xbet - Official Gaming Platform</title>
     <style>
         * {
             margin: 0;
@@ -32,10 +32,16 @@
             font-weight: bold;
             color: #ffcc00;
             letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 6px;
         }
         .auth-buttons button {
             padding: 6px 14px;
-            margin-left: 6px;
             border: none;
             border-radius: 4px;
             font-weight: bold;
@@ -51,6 +57,22 @@
             background-color: #d32f2f;
             color: #fff;
         }
+
+        /* নোটিশ বোর্ড চলমান টেক্সট (Marquee) */
+        .notice-board {
+            background-color: #1a2332;
+            color: #ffcc00;
+            padding: 8px 10px;
+            font-size: 13px;
+            border-bottom: 1px solid #30363d;
+            overflow: hidden;
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .notice-board marquee {
+            width: 100%;
+        }
+
         /* কন্টেইনার এবং গেম গ্রিড */
         .container {
             padding: 15px;
@@ -137,6 +159,7 @@
         .play-btn:hover {
             background: linear-gradient(to bottom, #ffea00, #ff9900);
         }
+
         /* ফুটার নেভিগেশন বার */
         .bottom-nav {
             position: fixed;
@@ -165,14 +188,14 @@
             color: #ffcc00;
         }
 
-        /* সুন্দর কাস্টম পপআপ মডাল ডিজাইন */
+        /* সুন্দর কাস্টম পপআপ মডাল উইন্ডো (ব্রাউজার অ্যালার্ট রিমুভ করার জন্য) */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
@@ -183,10 +206,10 @@
             border: 2px solid #ffcc00;
             border-radius: 10px;
             width: 90%;
-            max-width: 350px;
+            max-width: 360px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.7);
         }
         .modal-logo {
             font-size: 26px;
@@ -198,16 +221,17 @@
             font-size: 14px;
             color: #e6edf3;
             margin-bottom: 20px;
-            line-height: 1.5;
+            line-height: 1.6;
         }
         .modal-close-btn {
-            background-color: #d32f2f;
-            color: #fff;
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
             border: none;
-            padding: 8px 20px;
+            padding: 8px 25px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -215,18 +239,23 @@
 
     <!-- হেডার অংশ -->
     <header>
-        <div class="logo">1xbet</div>
+        <div class="logo">⚡ 1xbet</div>
         <div class="auth-buttons">
-            <button class="btn-signup" onclick="showModal('আইডি খুলতে বা কয়েন রিচার্জ করতে এজেন্টের সাথে যোগাযোগ করুন। বিকাশ নম্বর: 017XXXXXXXX')">Sign up</button>
-            <button class="btn-login" onclick="showModal('লগইন করতে আপনার এজেন্ট প্রদত্ত ইউজারনেম ও পাসওয়ার্ড ব্যবহার করুন।')">Login</button>
+            <button class="btn-signup" onclick="showModal('নতুন আইডি খুলতে বা এডমিনের নির্দিষ্ট পয়েন্ট নিতে অনুগ্রহ করে আমাদের অফিশিয়াল এজেন্টের সাথে যোগাযোগ করুন। বিকাশ/নগদ: 017XXXXXXXX')">Sign up</button>
+            <button class="btn-login" onclick="showModal('লগইন করতে আপনার এজেন্ট প্রদত্ত ইউজারনেম ও পাসওয়ার্ড ব্যবহার করুন। পয়েন্ট রিচার্জ করতে এজেন্টের সাথে যোগাযোগ করুন।')">Login</button>
         </div>
     </header>
 
-    <!-- মূল গেম লিস্ট সেকশন -->
+    <!-- নোটিশ বোর্ড (লগইন/সাইন-আপ এর নিচে চলমান বার্তা) -->
+    <div class="notice-board">
+        <marquee scrollamount="4">⚠️ নোটিশ: আইডি খুলতে বা এডমিনের নির্দিষ্ট পয়েন্ট নিতে এখুনি এজেন্টের সাথে যোগাযোগ করুন! কোনো ভুয়া নাম্বারে লেনদেন করবেন না।</marquee>
+    </div>
+
+    <!-- মূল গেম লিস্ট সেকশন (১০০+ গেমের ডাটাবেজ সহ অটো জেনারেটেড) -->
     <div class="container" style="padding-bottom: 70px;">
-        <div class="section-title">All Games (<span id="game-count">0</span>)</div>
+        <div class="section-title">Popular Games (<span id="game-count">0</span>)</div>
         <div class="game-grid" id="game-container">
-            <!-- গেমগুলো জাভাস্ক্রিপ্ট দিয়ে স্বয়ংক্রিয়ভাবে এখানে লোড হবে -->
+            <!-- জাভাস্ক্রিপ্ট দিয়ে গেমগুলো লোড হবে -->
         </div>
     </div>
 
@@ -242,34 +271,44 @@
     <!-- কাস্টম পপআপ মডাল উইন্ডো -->
     <div class="modal-overlay" id="customModal" onclick="hideModal(event)">
         <div class="modal-box">
-            <div class="modal-logo">1xbet</div>
-            <div class="modal-text" id="modalMessage">এখানে নোটিশ থাকবে</div>
+            <div class="modal-logo">⚡ 1xbet</div>
+            <div class="modal-text" id="modalMessage">সতর্কবার্তা</div>
             <button class="modal-close-btn" onclick="closeModal()">ঠিক আছে</button>
         </div>
     </div>
 
     <script>
-        // ১০০ থেকে ২০০+ গেমের ডাটাবেজ লিস্ট
-        const gamesList = [
-            { name: "Aviator Pro", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80" },
-            { name: "Teen Patti 20-20", img: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80" },
-            { name: "Ludo Quick", img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500&auto=format&fit=crop&q=80" },
-            { name: "SicBo Casino", img: "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500&auto=format&fit=crop&q=80" },
-            { name: "Color Game", img: "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80" },
-            { name: "Plinko Master", img: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80" },
-            { name: "Dragon Tiger", img: "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500&auto=format&fit=crop&q=80" },
-            { name: "Baccarat Live", img: "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500&auto=format&fit=crop&q=80" }
+        // ১০০+ গেমের ক্যাটাগরি ও নাম জেনারেট করার এরে (High-quality images সহ)
+        const baseImages = [
+            "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1596838132731-3301c3fd4317?w=500&auto=format&fit=crop&q=80",
+            "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80"
         ];
+
+        const gamePrefixes = ["Aviator", "Teen Patti", "Ludo", "SicBo", "Color Game", "Plinko", "Dragon Tiger", "Baccarat", "Roulette", "Slot King", "Fruit Party", "Poker Star", "Penalty Shoot", "Dice Deluxe"];
+        
+        // স্বয়ংক্রিয়ভাবে ১০০+ গেম তৈরি করা
+        const gamesList = [];
+        for (let i = 1; i <= 120; i++) {
+            const prefix = gamePrefixes[(i - 1) % gamePrefixes.length];
+            gamesList.push({
+                name: `${prefix} ${i}`,
+                img: baseImages[(i - 1) % baseImages.length]
+            });
+        }
 
         const gameContainer = document.getElementById('game-container');
         document.getElementById('game-count').innerText = gamesList.length;
 
+        // গেম কার্ডগুলো স্ক্রিনে রেন্ডার করা
         gamesList.forEach(game => {
             const gameCard = document.createElement('div');
             gameCard.className = 'game-card';
             gameCard.innerHTML = `
                 <div class="game-thumb-container">
-                    <img src="${game.img}" alt="${game.name}">
+                    <img src="${game.img}" alt="${game.name}" loading="lazy">
                 </div>
                 <div class="game-info">
                     <div class="game-title">${game.name}</div>
@@ -280,10 +319,10 @@
         });
 
         function playGame(gameName) {
-            showModal(gameName + ' গেমটি খেলতে প্রথমে এজেন্ট থেকে আপনার একাউন্টে কয়েন রিচার্জ করুন!');
+            showModal(`${gameName} গেমটি খেলতে প্রথমে এজেন্টের সাথে যোগাযোগ করে এডমিনের নির্দিষ্ট পয়েন্ট আপনার অ্যাকাউন্টে রিচার্জ করুন!`);
         }
 
-        // কাস্টম মডাল কন্ট্রোল ফাংশন
+        // কাস্টম মডাল কন্ট্রোল ফাংশন (কোনো ব্রাউজার অ্যালার্ট আসবে না)
         function showModal(message) {
             document.getElementById('modalMessage').innerText = message;
             document.getElementById('customModal').style.display = 'flex';
