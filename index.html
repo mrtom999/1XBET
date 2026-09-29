@@ -172,7 +172,7 @@
             background: linear-gradient(to bottom, #ffea00, #ff9900);
         }
 
-        /* অরিজিনাল ক্যাসিনো স্টাইল ফুল-স্ক্রিন গেম রান ইন্টারফেস */
+        /* ফুল-স্ক্রিন গেম রান ইন্টারফেস (সব ৫০টি গেমের জন্য প্রযোজ্য) */
         #gamePlaySection {
             display: none;
             background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
@@ -209,55 +209,63 @@
         .game-arena-box {
             background: #090d12;
             border: 1px solid #30363d;
-            padding: 25px;
+            padding: 20px;
             border-radius: 10px;
             text-align: center;
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
         }
-        /* রিয়েল ক্যাসিনো ডিসপ্লে গ্রাফিক্স */
-        .casino-display {
-            font-size: 28px;
-            font-weight: bold;
-            color: #00ffcc;
-            margin: 20px 0;
-            padding: 25px;
-            background: radial-gradient(circle, #1a2332 0%, #0d1117 100%);
+        /* গেম অ্যানিমেশন স্ক্রিন */
+        .aviator-screen {
+            position: relative;
+            height: 200px;
+            background: radial-gradient(circle, #1a2230 0%, #080c10 100%);
             border-radius: 10px;
             border: 2px solid #ffcc00;
-            min-height: 100px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            box-shadow: inset 0 0 15px rgba(0,255,204,0.2);
-            letter-spacing: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(255,204,0,0.15);
         }
-        .casino-subtext {
+        .multiplier-text {
+            font-size: 42px;
+            font-weight: bold;
+            color: #00ffcc;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0,255,204,0.5);
+        }
+        .plane-icon {
+            font-size: 36px;
+            margin-top: 5px;
+            transition: transform 0.2s;
+        }
+        .aviator-status {
             font-size: 13px;
             color: #8b949e;
             margin-top: 5px;
-            font-weight: normal;
         }
         .form-group-game {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-align: left;
         }
         .form-group-game label {
-            font-size: 13px;
+            font-size: 12px;
             color: #ffcc00;
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             font-weight: bold;
         }
         .form-control-game {
             width: 100%;
-            padding: 12px;
+            padding: 10px;
             background: #0d1117;
             border: 1px solid #30363d;
             color: #fff;
             border-radius: 6px;
-            font-size: 16px;
+            font-size: 15px;
             text-align: center;
             font-weight: bold;
         }
@@ -270,14 +278,14 @@
             font-weight: bold;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             box-shadow: 0 4px 15px rgba(255,204,0,0.4);
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: 0.2s;
         }
-        .game-action-btn:active {
-            transform: scale(0.98);
+        .cashout-btn {
+            background: linear-gradient(to bottom, #00ffcc, #00aa88);
+            color: #000;
         }
 
         /* ফুটার নেভিগেশন বার */
@@ -417,30 +425,33 @@
     <!-- মূল কন্টেইনার -->
     <div class="container" style="padding-bottom: 70px;">
         
-        <!-- ১. অরিজিনাল ক্যাসিনো গেম রান সেকশন -->
+        <!-- ১. গেম রান সেকশন (যেকোনো গেম ক্লিক করলে এটি পেজে রান হবে) -->
         <div id="gamePlaySection">
             <div class="game-screen-header">
                 <div class="game-screen-title" id="activeGameTitle">🎮 Game Arena</div>
                 <button class="back-to-home-btn" onclick="goHome()">✕ গেম থেকে বের হন</button>
             </div>
             <div class="game-arena-box">
+                <div class="aviator-screen" id="aviatorScreen">
+                    <div class="multiplier-text" id="multiplierDisplay">1.00x</div>
+                    <div class="plane-icon" id="planeIcon">🚀</div>
+                    <div class="aviator-status" id="aviatorStatusText">বেট লাগিয়ে টেক অফ করুন!</div>
+                </div>
+
                 <div class="form-group-game">
                     <label>বেট পয়েন্ট পরিমাণ (Bet Amount):</label>
                     <input type="number" id="betAmountInput" class="form-control-game" value="10" min="1">
                 </div>
-                <div class="casino-display" id="casinoScreen">
-                    <span id="screenMainText">READY TO PLAY</span>
-                    <span class="casino-subtext" id="screenSubText">আপনার বেট নির্ধারণ করুন এবং স্পিন করুন</span>
-                </div>
-                <button class="game-action-btn" id="executePlayBtn" onclick="">স্পিন / বেট শুরু করুন</button>
+
+                <button class="game-action-btn" id="betActionBtn" onclick="startAviatorBet()">বেট ধরুন (BET)</button>
             </div>
         </div>
 
-        <!-- ২. মূল ৫০টি গেমের লিস্ট সেকশন -->
+        <!-- ২. ঠিক ৫০টি গেমের লিস্ট সেকশন -->
         <div id="gameHomeSection">
-            <div class="section-title">Popular Games (<span id="game-count">0</span>)</div>
+            <div class="section-title">Popular Games (<span id="game-count">50</span>)</div>
             <div class="game-grid" id="game-container">
-                <!-- জাভাস্ক্রিপ্ট দিয়ে ৫০টি গেম লোড হবে -->
+                <!-- জাভাস্ক্রিপ্ট দিয়ে ৫০টি গেম ডায়নামিক্লি লোড হবে -->
             </div>
         </div>
 
@@ -480,7 +491,7 @@
         }
         const db = firebase.firestore();
 
-        // সঠিক ৫০টি প্রিমিয়াম গেমের ডাটা জেনারেটর
+        // সঠিক ৫০টি গেমের ডাটা জেনারেটর
         const baseImages = [
             "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80",
             "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80",
@@ -489,7 +500,7 @@
             "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&auto=format&fit=crop&q=80"
         ];
 
-        const gamePrefixes = ["Aviator Pro", "Teen Patti", "Ludo King", "SicBo Deluxe", "Color Game", "Plinko Master", "Dragon Tiger", "Baccarat VIP", "Roulette 3D", "Slot King", "Fruit Party", "Poker Star", "Penalty Shoot", "Dice Deluxe"];
+        const gamePrefixes = ["Aviator", "Teen Patti", "Ludo King", "SicBo", "Color Game", "Plinko", "Dragon Tiger", "Baccarat", "Roulette", "Slot King", "Fruit Party", "Poker Star", "Penalty Shoot", "Dice Deluxe"];
         
         const gamesList = [];
         for (let i = 1; i <= 50; i++) {
@@ -541,7 +552,7 @@
             });
         }
 
-        // গেম লিস্ট লুকিয়ে সরাসরি পেজে ক্যাসিনো গেম স্ক্রিন রান করা
+        // গেম লিস্ট লুকিয়ে সরাসরি পেজে গেম স্ক্রিন রান করা (৫০টি গেমের যেকোনোটিতে কাজ করবে)
         function openGameScreen(gameName) {
             const savedUser = localStorage.getItem('xbet_logged_user');
             if (!savedUser) {
@@ -553,21 +564,46 @@
             document.getElementById('gamePlaySection').style.display = 'block';
             
             document.getElementById('activeGameTitle').innerText = `🎮 ${gameName}`;
-            document.getElementById('screenMainText').innerText = "READY TO SPIN";
-            document.getElementById('screenSubText').innerText = "বেট বসিয়ে স্পিন বাটনে ক্লিক করুন";
-            document.getElementById('executePlayBtn').setAttribute('onclick', `executeGamePlay('${gameName}')`);
+            resetAviatorUI();
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // হোম পেজে ফিরে যাওয়া
         function goHome() {
+            if (isGameRunning) {
+                alert('গেম চলাকালীন বাইরে যেতে পারবেন না!');
+                return;
+            }
             document.getElementById('gamePlaySection').style.display = 'none';
             document.getElementById('gameHomeSection').style.display = 'block';
         }
 
-        // অরিজিনাল ক্যাসিনো গেম অ্যানিমেশন ও ফায়ারবেস ব্যালেন্স আপডেট লজিক
-        function executeGamePlay(gameName) {
+        let isGameRunning = false;
+        let currentMultiplier = 1.00;
+        let crashMultiplier = 1.00;
+        let gameInterval = null;
+        let activeBetAmount = 0;
+        let hasCashedOut = false;
+
+        function resetAviatorUI() {
+            isGameRunning = false;
+            hasCashedOut = false;
+            currentMultiplier = 1.00;
+            document.getElementById('multiplierDisplay').innerText = "1.00x";
+            document.getElementById('multiplierDisplay').style.color = "#00ffcc";
+            document.getElementById('planeIcon').style.transform = "translate(0px, 0px) rotate(0deg)";
+            document.getElementById('aviatorStatusText').innerText = "বেট লাগিয়ে টেক অফ করুন!";
+            
+            const btn = document.getElementById('betActionBtn');
+            btn.innerText = "বেট ধরুন (BET)";
+            btn.className = "game-action-btn";
+            btn.setAttribute('onclick', 'startAviatorBet()');
+            document.getElementById('betAmountInput').disabled = false;
+        }
+
+        // বেট শুরু এবং ফায়ারবেস থেকে ব্যালেন্স আপডেট
+        function startAviatorBet() {
             const savedUser = localStorage.getItem('xbet_logged_user');
             const betAmt = Number(document.getElementById('betAmountInput').value);
 
@@ -587,45 +623,98 @@
                     const currentBal = Number(doc.data().balance || 0);
 
                     if (currentBal < betAmt) {
-                        document.getElementById('screenMainText').innerText = "INSUFFICIENT BALANCE";
-                        document.getElementById('screenSubText').innerText = "পর্যাপ্ত ব্যালেন্স নেই! এজেন্ট (RH45) থেকে রিচার্জ করুন।";
+                        alert('পর্যাপ্ত ব্যালেন্স নেই! এজেন্ট (RH45) থেকে রিচার্জ করুন।');
                         return;
                     }
 
-                    // গেম লোডিং / স্পিনিং অ্যানিমেশন টেক্সট
-                    document.getElementById('screenMainText').innerText = "SPINNING...";
-                    document.getElementById('screenSubText').innerText = "ভাগ্য পরীক্ষা করা হচ্ছে...";
-                    document.getElementById('executePlayBtn').disabled = true;
-
-                    setTimeout(() => {
-                        // র‍্যান্ডম গেম রেজাল্ট (৫০-৫০ চান্স জিত বা হার)
-                        const isWin = Math.random() >= 0.5;
-                        let newBal = 0;
-                        let mainText = "";
-                        let subText = "";
-
-                        if (isWin) {
-                            const winAmt = betAmt * 2;
-                            newBal = currentBal + betAmt; // লাভসহ যোগ
-                            mainText = `YOU WIN +${winAmt} ৳`;
-                            subText = `🎉 অভিনন্দন! আপনি জিতেছেন!`;
-                        } else {
-                            newBal = currentBal - betAmt; // লস
-                            mainText = `YOU LOST -${betAmt} ৳`;
-                            subText = `😢 আপনি হেরে গেছেন! আবার চেষ্টা করুন।`;
-                        }
-
-                        db.collection("users").doc(docId).update({
-                            balance: newBal
-                        }).then(() => {
-                            document.getElementById('loggedBalance').innerText = newBal;
-                            document.getElementById('screenMainText').innerText = mainText;
-                            document.getElementById('screenSubText').innerText = subText;
-                            document.getElementById('executePlayBtn').disabled = false;
-                        });
-                    }, 1000);
+                    const newBal = currentBal - betAmt;
+                    db.collection("users").doc(docId).update({
+                        balance: newBal
+                    }).then(() => {
+                        document.getElementById('loggedBalance').innerText = newBal;
+                        activeBetAmount = betAmt;
+                        runFlightAnimation(docId);
+                    });
                 });
             });
+        }
+
+        // গেম রান ও অ্যানিমেশন লজিক
+        function runFlightAnimation(docId) {
+            isGameRunning = true;
+            hasCashedOut = false;
+            currentMultiplier = 1.00;
+            
+            crashMultiplier = Number((Math.random() * 3.5 + 1.2).toFixed(2));
+
+            const btn = document.getElementById('betActionBtn');
+            btn.innerText = "ক্যাশ আউট (CASH OUT)";
+            btn.className = "game-action-btn cashout-btn";
+            btn.setAttribute('onclick', 'cashOutGame()');
+            document.getElementById('betAmountInput').disabled = true;
+            document.getElementById('aviatorStatusText').innerText = "গেম চলছে! সময়মতো ক্যাশ আউট করুন...";
+
+            gameInterval = setInterval(() => {
+                currentMultiplier = Number((currentMultiplier + 0.04).toFixed(2));
+                document.getElementById('multiplierDisplay').innerText = currentMultiplier + "x";
+
+                let moveX = Math.min(currentMultiplier * 25, 180);
+                let moveY = -Math.min(currentMultiplier * 15, 80);
+                document.getElementById('planeIcon').style.transform = `translate(${moveX}px, ${moveY}px) rotate(-15deg)`;
+
+                if (currentMultiplier >= crashMultiplier) {
+                    clearInterval(gameInterval);
+                    gameCrashed();
+                }
+            }, 100);
+        }
+
+        // ক্যাশ আউট বা উইনিং লজিক
+        function cashOutGame() {
+            if (!isGameRunning || hasCashedOut) return;
+            hasCashedOut = true;
+            clearInterval(gameInterval);
+
+            const winAmount = Math.floor(activeBetAmount * currentMultiplier);
+            const savedUser = localStorage.getItem('xbet_logged_user');
+
+            db.collection("users").where("username", "==", savedUser).get().then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    const docId = doc.id;
+                    const currentBal = Number(doc.data().balance || 0);
+                    const finalBal = currentBal + winAmount;
+
+                    db.collection("users").doc(docId).update({
+                        balance: finalBal
+                    }).then(() => {
+                        document.getElementById('loggedBalance').innerText = finalBal;
+                        document.getElementById('multiplierDisplay').style.color = "#00ffcc";
+                        document.getElementById('aviatorStatusText').innerText = `🎉 সফল ক্যাশ আউট! আপনি জিতেছেন +${winAmount} ৳`;
+                        
+                        const btn = document.getElementById('betActionBtn');
+                        btn.innerText = "পরবর্তী রাউন্ড (PLAY AGAIN)";
+                        btn.className = "game-action-btn";
+                        btn.setAttribute('onclick', 'resetAviatorUI()');
+                        isGameRunning = false;
+                        document.getElementById('betAmountInput').disabled = false;
+                    });
+                });
+            });
+        }
+
+        // গেম ক্র্যাশ বা লস হলে
+        function gameCrashed() {
+            if (hasCashedOut) return;
+            isGameRunning = false;
+            document.getElementById('planeIcon').style.transform = "translate(0px, 50px) rotate(90deg)";
+            document.getElementById('multiplierDisplay').style.color = "#ff4d4d";
+            document.getElementById('aviatorStatusText').innerText = `💥 ক্র্যাশ হয়েছে! (${crashMultiplier}x) আপনি হেরে গেছেন।`;
+
+            const btn = document.getElementById('betActionBtn');
+            btn.innerText = "আবার চেষ্টা করুন (TRY AGAIN)";
+            btn.className = "game-action-btn";
+            btn.setAttribute('onclick', 'resetAviatorUI()');
+            document.getElementById('betAmountInput').disabled = false;
         }
 
         function checkAccountStatus() {
