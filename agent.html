@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1xbet - Agent Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #0d1117;
+            color: #fff;
+            padding: 15px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #ffcc00;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffcc00;
+            padding-bottom: 10px;
+        }
+        .card {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        h3 {
+            font-size: 15px;
+            color: #ffcc00;
+            margin-bottom: 12px;
+        }
+        .form-group {
+            margin-bottom: 12px;
+        }
+        label {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #8b949e;
+        }
+        input {
+            width: 100%;
+            padding: 8px 10px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        input:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+        .btn {
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        .btn:hover {
+            background: linear-gradient(to bottom, #ffea00, #ff9900);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #30363d;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #21262d;
+            color: #ffcc00;
+        }
+        .win { color: #238636; font-weight: bold; }
+        .loss { color: #d32f2f; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>⚡ 1xbet Agent Control Panel</h2>
+
+        <!-- নতুন আইডি তৈরি সেকশন -->
+        <div class="card">
+            <h3>নতুন ইউজার আইডি ও পাসওয়ার্ড তৈরি করুন</h3>
+            <div class="form-group">
+                <label>ইউজার নাম / আইডি:</label>
+                <input type="text" id="agentUser" placeholder="যেমন: player_rahim">
+            </div>
+            <div class="form-group">
+                <label>পাসওয়ার্ড:</label>
+                <input type="text" id="agentPass" placeholder="যেমন: pass1234">
+            </div>
+            <div class="form-group">
+                <label>পয়েন্ট / কয়েন পরিমাণ (এডমিনের লিমি트 অনুযায়ী):</label>
+                <input type="number" id="agentPoints" placeholder="যেমন: 1000">
+            </div>
+            <button class="btn" onclick="createAccount()">আইডি তৈরি করুন</button>
+        </div>
+
+        <!-- ইউজার পাসওয়ার্ড ও ব্যালেন্স লিস্ট -->
+        <div class="card">
+            <h3>ইউজার লিস্ট ও পাসওয়ার্ড চেক</h3>
+            <table>
+                <tr>
+                    <th>ইউজার আইডি</th>
+                    <th>পাসওয়ার্ড</th>
+                    <th>ব্যালেন্স</th>
+                </tr>
+                <tr>
+                    <td>user_kamal</td>
+                    <td>kamal123</td>
+                    <td>৫,০০০ পয়েন্ট</td>
+                </tr>
+                <tr>
+                    <td>player_sakib</td>
+                    <td>sakib999</td>
+                    <td>২,৫০০ পয়েন্ট</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- ইউজার গেম হিস্ট্রি -->
+        <div class="card">
+            <h3>ইউজার গেম খেলা ও হারজিতের হিস্ট্রি</h3>
+            <table>
+                <tr>
+                    <th>ইউজার</th>
+                    <th>গেমের নাম</th>
+                    <th>ফলাফল</th>
+                </tr>
+                <tr>
+                    <td>user_kamal</td>
+                    <td>Aviator 1</td>
+                    <td class="win">জিতেছে (+৫০০)</td>
+                </tr>
+                <tr>
+                    <td>player_sakib</td>
+                    <td>Teen Patti 2</td>
+                    <td class="loss">হেরেছে (-২০০)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function createAccount() {
+            const user = document.getElementById('agentUser').value;
+            const pass = document.getElementById('agentPass').value;
+            const points = document.getElementById('agentPoints').value;
+
+            if(!user || !pass || !points) {
+                alert("সবগুলো ঘর সঠিকভাবে পূরণ করুন!");
+                return;
+            }
+
+            alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট সফলভাবে সেট করা হয়েছে।`);
+            document.getElementById('agentUser').value = "";
+            document.getElementById('agentPass').value = "";
+            document.getElementById('agentPoints').value = "";
+        }
+    </script>
+</body>
+</html>
