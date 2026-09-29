@@ -71,7 +71,6 @@
             color: #000;
             border: none;
             padding: 10px;
-            width: 10px; /* will fix via 100% below */
             width: 100%;
             font-weight: bold;
             border-radius: 4px;
@@ -122,6 +121,7 @@
         }
     </style>
 
+    <!-- ফায়ারবেস SDK (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
@@ -199,16 +199,21 @@
     </div>
 
     <script>
+        // ==========================================
+        // ফায়ারবেস কনফিগারেশন ও ইনিশিয়ালাইজেশন
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "YOUR_FIREBASE_API_KEY",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
+            authDomain: "xbet-85104.firebaseapp.com",
+            projectId: "xbet-85104",
+            storageBucket: "xbet-85104.firebasestorage.app",
+            messagingSenderId: "839557510948",
+            appId: "1:839557510948:web:a80ebd160402b78087e5b1"
         };
-        // firebase.initializeApp(firebaseConfig);
-        // const db = firebase.firestore();
+
+        // ফায়ারবেস অ্যাপ ও ফায়ারস্টোর ডাটাবেজ চালু করা হলো
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
         function updateAgent() {
             const id = document.getElementById('adminAgentId').value;
