@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1xbet - Admin Panel</title>
+    <title>1xbet - Master Admin Panel</title>
     <style>
         * {
             margin: 0;
@@ -14,10 +14,10 @@
         body {
             background-color: #0d1117;
             color: #fff;
-            padding: 20px;
+            padding: 15px;
         }
-        .admin-box {
-            max-width: 500px;
+        .admin-container {
+            max-width: 650px;
             margin: 0 auto;
             background-color: #161b22;
             border: 1px solid #30363d;
@@ -32,95 +32,223 @@
             border-bottom: 2px solid #ffcc00;
             padding-bottom: 10px;
         }
-        .form-group {
+        .card {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            padding: 15px;
+            border-radius: 6px;
             margin-bottom: 15px;
+        }
+        h3 {
+            font-size: 15px;
+            color: #ffcc00;
+            margin-bottom: 12px;
+        }
+        .form-group {
+            margin-bottom: 12px;
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
+            margin-bottom: 4px;
+            font-size: 13px;
             color: #8b949e;
         }
-        input {
+        input, select {
             width: 100%;
-            padding: 10px;
-            background-color: #0d1117;
+            padding: 8px 10px;
+            background-color: #161b22;
             border: 1px solid #30363d;
             color: #fff;
             border-radius: 4px;
-            font-size: 16px;
+            font-size: 14px;
         }
-        input:focus {
+        input:focus, select:focus {
             border-color: #ffcc00;
             outline: none;
         }
-        .update-btn {
+        .btn {
             background: linear-gradient(to bottom, #ffd700, #ffaa00);
             color: #000;
             border: none;
-            padding: 12px;
+            padding: 10px;
+            width: 10px; /* will fix via 100% below */
             width: 100%;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
-            margin-top: 10px;
+            font-size: 14px;
+            margin-top: 5px;
         }
-        .update-btn:hover {
+        .btn:hover {
             background: linear-gradient(to bottom, #ffea00, #ff9900);
         }
         .success-msg {
-            margin-top: 15px;
+            margin-top: 8px;
             text-align: center;
             color: #238636;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        th, td {
+            border: 1px solid #30363d;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #21262d;
+            color: #ffcc00;
+        }
+        .action-btn-block {
+            background-color: #d32f2f;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .action-btn-unblock {
+            background-color: #238636;
+            color: #fff;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
         }
     </style>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <div class="admin-box">
+    <div class="admin-container">
         <h2>⚡ 1xbet Master Admin Panel</h2>
-        
-        <div class="form-group">
-            <label for="agentName">এজেন্ট আইডি / নাম:</label>
-            <input type="text" id="agentName" placeholder="যেমন: agent_dhaka">
+
+        <!-- ১. এজেন্ট পাসওয়ার্ড ও পয়েন্ট ম্যানেজমেন্ট -->
+        <div class="card">
+            <h3>এজেন্ট পাসওয়ার্ড ও পয়েন্ট লিমিট পরিবর্তন</h3>
+            <div class="form-group">
+                <label>এজেন্ট আইডি:</label>
+                <input type="text" id="adminAgentId" value="RH45">
+            </div>
+            <div class="form-group">
+                <label>এজেন্টের নতুন পাসওয়ার্ড:</label>
+                <input type="text" id="adminAgentPass" placeholder="নতুন পাসওয়ার্ড দিন">
+            </div>
+            <div class="form-group">
+                <label>এজেন্ট পয়েন্ট লিমিট বরাদ্দ:</label>
+                <input type="number" id="adminAgentPoints" value="50000" placeholder="যেমন: 50000">
+            </div>
+            <button class="btn" onclick="updateAgent()">এজেন্ট আপডেট করুন</button>
+            <div class="success-msg" id="msgAgent"></div>
         </div>
 
-        <div class="form-group">
-            <label for="agentNewPass">এজেন্টের নতুন পাসওয়ার্ড:</label>
-            <input type="text" id="agentNewPass" placeholder="নতুন পাসওয়ার্ড বসান">
+        <!-- ২. উইন রেট (Win Rate) নিয়ন্ত্রণ -->
+        <div class="card">
+            <h3>গেম উইন রেট (Win Rate) কন্ট্রোল</h3>
+            <div class="form-group">
+                <label>উইন রেট মোড:</label>
+                <select id="winRateMode">
+                    <option value="normal">নরমাল (Standard)</option>
+                    <option value="low">ইউজারের হার বেশি (Low Win Rate)</option>
+                    <option value="high">ইউজারের জিত বেশি (High Win Rate)</option>
+                </select>
+            </div>
+            <button class="btn" onclick="updateWinRate()">উইন রেট সেভ করুন</button>
+            <div class="success-msg" id="msgWinRate"></div>
         </div>
 
-        <div class="form-group">
-            <label for="masterPoints">নির্দিষ্ট পয়েন্ট / কয়েন লিমিট বরাদ্দ করুন:</label>
-            <input type="number" id="masterPoints" placeholder="যেমন: 50000">
+        <!-- ৩. ইউজার ব্লক / আনব্লক প্যানেল -->
+        <div class="card">
+            <h3>ইউজার ম্যানেজমেন্ট (ব্লক / আনব্লক)</h3>
+            <table>
+                <tr>
+                    <th>ইউজার আইডি</th>
+                    <th>স্ট্যাটাস</th>
+                    <th>অ্যাকশন</th>
+                </tr>
+                <tr>
+                    <td>user_kamal</td>
+                    <td style="color: #238636;">অ্যাক্টিভ</td>
+                    <td><button class="action-btn-block" onclick="toggleBlock('user_kamal', this)">ব্লক করুন</button></td>
+                </tr>
+                <tr>
+                    <td>player_sakib</td>
+                    <td style="color: #d32f2f;">ব্লকড</td>
+                    <td><button class="action-btn-unblock" onclick="toggleBlock('player_sakib', this)">আনব্লক</button></td>
+                </tr>
+            </table>
         </div>
 
-        <button class="update-btn" onclick="updateAgentData()">এজেন্টের তথ্য ও পাসওয়ার্ড আপডেট করুন</button>
-        <div class="success-msg" id="adminMsg"></div>
+        <!-- ৪. গেম ব্লক প্যানেল -->
+        <div class="card">
+            <h3>গেম ব্লক / অফ করুন</h3>
+            <div class="form-group">
+                <label>ব্লক করার জন্য গেমের নাম:</label>
+                <input type="text" id="blockGameName" placeholder="যেমন: Aviator Pro">
+            </div>
+            <button class="btn" style="background: #d32f2f; color: #fff;" onclick="blockGame()">গেম ব্লক করুন</button>
+            <div class="success-msg" id="msgGameBlock"></div>
+        </div>
     </div>
 
     <script>
-        function updateAgentData() {
-            const agent = document.getElementById('agentName').value;
-            const newPass = document.getElementById('agentNewPass').value;
-            const points = document.getElementById('masterPoints').value;
-            const msgBox = document.getElementById('adminMsg');
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
+        };
+        // firebase.initializeApp(firebaseConfig);
+        // const db = firebase.firestore();
 
-            if(agent === "" || newPass === "" || points === "") {
-                alert("দয়া করে এজেন্টের নাম, নতুন পাসওয়ার্ড এবং পয়েন্ট উভয়ই দিন!");
+        function updateAgent() {
+            const id = document.getElementById('adminAgentId').value;
+            const pass = document.getElementById('adminAgentPass').value;
+            const points = document.getElementById('adminAgentPoints').value;
+
+            if(!pass || !points) {
+                alert("পাসওয়ার্ড এবং পয়েন্ট উভয় ঘর পূরণ করুন!");
                 return;
             }
+            document.getElementById('msgAgent').innerText = `সফল! '${id}' এর পাসওয়ার্ড ও নতুন ${points} পয়েন্ট বরাদ্দ করা হয়েছে।`;
+            document.getElementById('adminAgentPass').value = "";
+        }
 
-            msgBox.innerText = `সফল! '${agent}' এর পাসওয়ার্ড পরিবর্তন করা হয়েছে এবং নতুন ${points} পয়েন্ট বরাদ্দ করা হয়েছে।`;
-            
-            document.getElementById('agentName').value = "";
-            document.getElementById('agentNewPass').value = "";
-            document.getElementById('masterPoints').value = "";
+        function updateWinRate() {
+            const mode = document.getElementById('winRateMode').value;
+            document.getElementById('msgWinRate').innerText = `সফল! উইন রেট মোড '${mode}' এ সেট করা হয়েছে।`;
+        }
+
+        function toggleBlock(user, btn) {
+            if(btn.innerText === "ব্লক করুন") {
+                btn.innerText = "আনব্লক";
+                btn.className = "action-btn-unblock";
+                alert(`${user} কে সফলভাবে ব্লক করা হয়েছে।`);
+            } else {
+                btn.innerText = "ব্লক করুন";
+                btn.className = "action-btn-block";
+                alert(`${user} কে আনব্লক করা হয়েছে।`);
+            }
+        }
+
+        function blockGame() {
+            const game = document.getElementById('blockGameName').value;
+            if(!game) {
+                alert("গেমের নাম লিখুন!");
+                return;
+            }
+            document.getElementById('msgGameBlock').innerText = `সফল! '${game}' গেমটি প্ল্যাটফর্ম থেকে ব্লক করা হয়েছে।`;
+            document.getElementById('blockGameName').value = "";
         }
     </script>
-
 </body>
 </html>
