@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1xbet - Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background-color: #0d1117;
+            color: #fff;
+            padding: 20px;
+        }
+        .admin-box {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        h2 {
+            color: #ffcc00;
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ffcc00;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #8b949e;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #fff;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input:focus {
+            border-color: #ffcc00;
+            outline: none;
+        }
+        .update-btn {
+            background: linear-gradient(to bottom, #ffd700, #ffaa00);
+            color: #000;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .update-btn:hover {
+            background: linear-gradient(to bottom, #ffea00, #ff9900);
+        }
+        .success-msg {
+            margin-top: 15px;
+            text-align: center;
+            color: #238636;
+            font-weight: bold;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-box">
+        <h2>⚡ 1xbet Master Admin Panel</h2>
+        
+        <div class="form-group">
+            <label for="agentName">এজেন্ট আইডি / নাম:</label>
+            <input type="text" id="agentName" placeholder="যেমন: agent_dhaka">
+        </div>
+
+        <div class="form-group">
+            <label for="agentNewPass">এজেন্টের নতুন পাসওয়ার্ড:</label>
+            <input type="text" id="agentNewPass" placeholder="নতুন পাসওয়ার্ড বসান">
+        </div>
+
+        <div class="form-group">
+            <label for="masterPoints">নির্দিষ্ট পয়েন্ট / কয়েন লিমিট বরাদ্দ করুন:</label>
+            <input type="number" id="masterPoints" placeholder="যেমন: 50000">
+        </div>
+
+        <button class="update-btn" onclick="updateAgentData()">এজেন্টের তথ্য ও পাসওয়ার্ড আপডেট করুন</button>
+        <div class="success-msg" id="adminMsg"></div>
+    </div>
+
+    <script>
+        function updateAgentData() {
+            const agent = document.getElementById('agentName').value;
+            const newPass = document.getElementById('agentNewPass').value;
+            const points = document.getElementById('masterPoints').value;
+            const msgBox = document.getElementById('adminMsg');
+
+            if(agent === "" || newPass === "" || points === "") {
+                alert("দয়া করে এজেন্টের নাম, নতুন পাসওয়ার্ড এবং পয়েন্ট উভয়ই দিন!");
+                return;
+            }
+
+            msgBox.innerText = `সফল! '${agent}' এর পাসওয়ার্ড পরিবর্তন করা হয়েছে এবং নতুন ${points} পয়েন্ট বরাদ্দ করা হয়েছে।`;
+            
+            document.getElementById('agentName').value = "";
+            document.getElementById('agentNewPass').value = "";
+            document.getElementById('masterPoints').value = "";
+        }
+    </script>
+
+</body>
+</html>
