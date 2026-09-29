@@ -20,7 +20,6 @@
             align-items: center;
             min-height: 100vh;
         }
-        /* লগইন এবং মূল কন্টেইনার বক্স */
         .login-box, .container {
             width: 100%;
             max-width: 500px;
@@ -31,7 +30,7 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
         .container {
-            display: none; /* প্রথমে লগইন স্ক্রিন দেখাবে, সফল হলে ড্যাশবোর্ড আসবে */
+            display: none;
             max-width: 600px;
         }
         h2 {
@@ -52,6 +51,19 @@
             font-size: 15px;
             color: #ffcc00;
             margin-bottom: 12px;
+        }
+        .balance-box {
+            background-color: #21262d;
+            border: 1px solid #ffcc00;
+            padding: 12px;
+            text-align: center;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .balance-box span {
+            color: #ffcc00;
+            font-size: 18px;
+            font-weight: bold;
         }
         .form-group {
             margin-bottom: 12px;
@@ -115,13 +127,12 @@
         .loss { color: #d32f2f; font-weight: bold; }
     </style>
 
-    <!-- ফায়ারবেস লাইব্রেরি স্ক্রিপ্ট -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
-    <!-- ১. এজেন্ট লগইন স্ক্রিন (RH45 এবং পাসওয়ার্ড দিয়ে প্রবেশ করতে হবে) -->
+    <!-- এজেন্ট লগইন স্ক্রিন -->
     <div class="login-box" id="loginSection">
         <h2>⚡ Agent Login</h2>
         <div class="form-group">
@@ -129,16 +140,21 @@
             <input type="text" id="agentUsername" placeholder="যেমন: RH45">
         </div>
         <div class="form-group">
-            <label>পাসওয়ার্ড:</label>
+            <label>নির্দিষ্ট পাসওয়ার্ড:</label>
             <input type="password" id="agentPassword" placeholder="পাসওয়ার্ড দিন">
         </div>
         <button class="btn" onclick="agentLogin()">লগইন করুন</button>
         <div class="error-msg" id="loginError"></div>
     </div>
 
-    <!-- ২. এজেন্ট কন্ট্রোল প্যানেল ড্যাশবোর্ড -->
+    <!-- এজেন্ট ড্যাশবোর্ড -->
     <div class="container" id="dashboardSection">
         <h2>⚡ 1xbet Agent Control Panel</h2>
+
+        <!-- এজেন্টের নিজের পয়েন্ট দেখার বক্স -->
+        <div class="balance-box">
+            এজেন্টের বর্তমান ব্যালেন্স / পয়েন্ট: <span id="agentCurrentBalance">৫০,০০০ পয়েন্ট</span>
+        </div>
 
         <!-- নতুন আইডি তৈরি সেকশন -->
         <div class="card">
@@ -152,13 +168,13 @@
                 <input type="text" id="agentPass" placeholder="যেমন: pass1234">
             </div>
             <div class="form-group">
-                <label>পয়েন্ট / কয়েন পরিমাণ (এডমিনের লিমিট অনুযায়ী):</label>
+                <label>পয়েন্ট পরিমাণ:</label>
                 <input type="number" id="agentPoints" placeholder="যেমন: 1000">
             </div>
             <button class="btn" onclick="createAccount()">আইডি তৈরি করুন</button>
         </div>
 
-        <!-- ইউজার পাসওয়ার্ড ও ব্যালেন্স লিস্ট -->
+        <!-- ইউজার পাসওয়ার্ড ও ব্যালেন্স লিস্ট (এজেন্ট দেখতে পারবে) -->
         <div class="card">
             <h3>ইউজার লিস্ট ও পাসওয়ার্ড চেক</h3>
             <table>
@@ -179,32 +195,9 @@
                 </tr>
             </table>
         </div>
-
-        <!-- ইউজার গেম হিস্ট্রি -->
-        <div class="card">
-            <h3>ইউজার গেম খেলা ও হারজিতের হিস্ট্রি</h3>
-            <table>
-                <tr>
-                    <th>ইউজার</th>
-                    <th>গেমের নাম</th>
-                    <th>ফলাফল</th>
-                </tr>
-                <tr>
-                    <td>user_kamal</td>
-                    <td>Aviator 1</td>
-                    <td class="win">জিতেছে (+৫০০)</td>
-                </tr>
-                <tr>
-                    <td>player_sakib</td>
-                    <td>Teen Patti 2</td>
-                    <td class="loss">হেরেছে (-২০০)</td>
-                </tr>
-            </table>
-        </div>
     </div>
 
     <script>
-        // ফায়ারবেস কনফিগারেশন (আপনার প্রজেক্টের API Key এখানে বসাবেন)
         const firebaseConfig = {
             apiKey: "YOUR_FIREBASE_API_KEY",
             authDomain: "your-project.firebaseapp.com",
@@ -213,11 +206,9 @@
             messagingSenderId: "SENDER_ID",
             appId: "APP_ID"
         };
-        
         // firebase.initializeApp(firebaseConfig);
         // const db = firebase.firestore();
 
-        // নির্দিষ্ট এজেন্ট লগইন ক্রেডেনশিয়াল
         const correctAgentUser = "RH45";
         const correctAgentPass = "Pass.Rohit@sharma45";
 
@@ -227,7 +218,6 @@
             const errorBox = document.getElementById('loginError');
 
             if (user === correctAgentUser && pass === correctAgentPass) {
-                // সফলভাবে লগইন হলে লগইন বক্স লুকিয়ে ড্যাশবোর্ড দেখাবে
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboardSection').style.display = 'block';
             } else {
@@ -245,7 +235,7 @@
                 return;
             }
 
-            alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট সফলভাবে সেট করা হয়েছে।`);
+            alert(`সফল! ইউজার আইডি: ${user}, পাসওয়ার্ড: ${pass} এবং ${points} পয়েন্ট তৈরি করা হয়েছে।`);
             document.getElementById('agentUser').value = "";
             document.getElementById('agentPass').value = "";
             document.getElementById('agentPoints').value = "";
