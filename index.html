@@ -188,7 +188,7 @@
             color: #ffcc00;
         }
 
-        /* সুন্দর কাস্টম পপআপ মডাল উইন্ডো (ব্রাউজার অ্যালার্ট রিমুভ করার জন্য) */
+        /* সুন্দর কাস্টম পপআপ মডাল উইন্ডো */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -234,6 +234,10 @@
             font-size: 14px;
         }
     </style>
+
+    <!-- ফায়ারবেস SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -241,17 +245,17 @@
     <header>
         <div class="logo">⚡ 1xbet</div>
         <div class="auth-buttons">
-            <button class="btn-signup" onclick="showModal('নতুন আইডি খুলতে বা এডমিনের নির্দিষ্ট পয়েন্ট নিতে অনুগ্রহ করে আমাদের অফিশিয়াল এজেন্টের সাথে যোগাযোগ করুন। বিকাশ/নগদ: 017XXXXXXXX')">Sign up</button>
-            <button class="btn-login" onclick="showModal('লগইন করতে আপনার এজেন্ট প্রদত্ত ইউজারনেম ও পাসওয়ার্ড ব্যবহার করুন। পয়েন্ট রিচার্জ করতে এজেন্টের সাথে যোগাযোগ করুন।')">Login</button>
+            <button class="btn-signup" onclick="showModal('নতুন আইডি খুলতে বা এজেন্টের নির্দিষ্ট পয়েন্ট নিতে অনুগ্রহ করে আমাদের অফিশিয়াল এজেন্টের সাথে যোগাযোগ করুন। এজেন্ট আইডি: RH45')">Sign up</button>
+            <button class="btn-login" onclick="showModal('লগইন করতে আপনার এজেন্ট প্রদত্ত ইউজারনেম ও পাসওয়ার্ড ব্যবহার করুন।')">Login</button>
         </div>
     </header>
 
-    <!-- নোটিশ বোর্ড (লগইন/সাইন-আপ এর নিচে চলমান বার্তা) -->
+    <!-- নোটিশ বোর্ড -->
     <div class="notice-board">
-        <marquee scrollamount="4">⚠️ নোটিশ: আইডি খুলতে বা এডমিনের নির্দিষ্ট পয়েন্ট নিতে এখুনি এজেন্টের সাথে যোগাযোগ করুন! কোনো ভুয়া নাম্বারে লেনদেন করবেন না।</marquee>
+        <marquee scrollamount="4">⚠️ নোটিশ: আইডি খুলতে বা পয়েন্ট রিচার্জ করতে অফিশিয়াল এজেন্ট (ID: RH45)-এর সাথে যোগাযোগ করুন!</marquee>
     </div>
 
-    <!-- মূল গেম লিস্ট সেকশন (১০০+ গেমের ডাটাবেজ সহ অটো জেনারেটেড) -->
+    <!-- মূল গেম লিস্ট সেকশন -->
     <div class="container" style="padding-bottom: 70px;">
         <div class="section-title">Popular Games (<span id="game-count">0</span>)</div>
         <div class="game-grid" id="game-container">
@@ -278,7 +282,23 @@
     </div>
 
     <script>
-        // ১০০+ গেমের ক্যাটাগরি ও নাম জেনারেট করার এরে (High-quality images সহ)
+        // ==========================================
+        // ফায়ারবেস কনফিগারেশন ও ইনিশিয়ালাইজেশন
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
+            authDomain: "xbet-85104.firebaseapp.com",
+            projectId: "xbet-85104",
+            storageBucket: "xbet-85104.firebasestorage.app",
+            messagingSenderId: "839557510948",
+            appId: "1:839557510948:web:a80ebd160402b78087e5b1"
+        };
+
+        // ফায়ারবেস অ্যাপ ও ফায়ারস্টোর ডাটাবেজ চালু করা হলো
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // ১০০+ গেমের ডাটা জেনারেটর
         const baseImages = [
             "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=500&auto=format&fit=crop&q=80",
             "https://images.unsplash.com/photo-1511193311914-0346f16efe90?w=500&auto=format&fit=crop&q=80",
@@ -289,7 +309,6 @@
 
         const gamePrefixes = ["Aviator", "Teen Patti", "Ludo", "SicBo", "Color Game", "Plinko", "Dragon Tiger", "Baccarat", "Roulette", "Slot King", "Fruit Party", "Poker Star", "Penalty Shoot", "Dice Deluxe"];
         
-        // স্বয়ংক্রিয়ভাবে ১০০+ গেম তৈরি করা
         const gamesList = [];
         for (let i = 1; i <= 120; i++) {
             const prefix = gamePrefixes[(i - 1) % gamePrefixes.length];
@@ -302,7 +321,6 @@
         const gameContainer = document.getElementById('game-container');
         document.getElementById('game-count').innerText = gamesList.length;
 
-        // গেম কার্ডগুলো স্ক্রিনে রেন্ডার করা
         gamesList.forEach(game => {
             const gameCard = document.createElement('div');
             gameCard.className = 'game-card';
@@ -319,10 +337,9 @@
         });
 
         function playGame(gameName) {
-            showModal(`${gameName} গেমটি খেলতে প্রথমে এজেন্টের সাথে যোগাযোগ করে এডমিনের নির্দিষ্ট পয়েন্ট আপনার অ্যাকাউন্টে রিচার্জ করুন!`);
+            showModal(`${gameName} গেমটি খেলতে প্রথমে এজেন্ট (RH45)-এর সাথে যোগাযোগ করে পয়েন্ট রিচার্জ করুন!`);
         }
 
-        // কাস্টম মডাল কন্ট্রোল ফাংশন (কোনো ব্রাউজার অ্যালার্ট আসবে না)
         function showModal(message) {
             document.getElementById('modalMessage').innerText = message;
             document.getElementById('customModal').style.display = 'flex';
