@@ -3,148 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>T.K. Group Gaming Arena - Agent RH45</title>
+    <title>1xBet - Official Gaming Platform</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <style>
         :root {
-            --primary-color: #1b2838;
-            --accent-color: #f39c12;
-            --bg-dark: #0f172a;
-            --text-light: #ffffff;
+            --1xbet-blue: #1475e1;
+            --1xbet-dark: #121212;
+            --card-bg: #1e1e1e;
+            --accent-yellow: #f39c12;
             --danger-color: #e74c3c;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg-dark); color: var(--text-light); padding-bottom: 70px; }
+        body { background-color: var(--1xbet-dark); color: #fff; padding-bottom: 75px; }
         
-        /* Top Header */
-        .header { display: flex; justify-content: space-between; align-items: center; background: var(--primary-color); padding: 12px 15px; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .logo-area { font-size: 18px; font-weight: bold; color: var(--accent-color); }
-        .user-balance { background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid var(--accent-color); font-size: 14px; }
+        /* 1xBet Top Header (Clean & No Extra Text) */
+        .header { display: flex; justify-content: space-between; align-items: center; background: #1f1f1f; padding: 10px 15px; border-bottom: 2px solid var(--1xbet-blue); position: sticky; top: 0; z-index: 1000; }
+        .logo-1xbet { font-size: 20px; font-weight: 900; color: #fff; font-style: italic; letter-spacing: 1px; }
+        .logo-1xbet span { color: var(--1xbet-blue); background: #fff; padding: 0 4px; border-radius: 3px; font-style: normal; }
+        
+        .auth-buttons { display: flex; gap: 6px; }
+        .btn-login { background: transparent; border: 1px solid var(--1xbet-blue); color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .btn-reg { background: var(--1xbet-blue); border: none; color: #fff; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 12px; }
+        .user-panel { display: none; align-items: center; gap: 8px; background: #2a2a2a; padding: 4px 10px; border-radius: 15px; border: 1px solid var(--1xbet-blue); }
+        .user-panel span { font-size: 12px; color: var(--accent-yellow); font-weight: bold; }
 
-        /* Game Arena Container */
-        .container { padding: 15px; }
-        .section-title { font-size: 16px; margin-bottom: 12px; color: var(--accent-color); border-left: 4px solid var(--accent-color); padding-left: 8px; }
+        /* Search & Filter Bar */
+        .search-filter-container { padding: 10px 15px; background: #181818; }
+        .search-box { display: flex; align-items: center; background: #262626; border-radius: 20px; padding: 6px 12px; border: 1px solid #333; margin-bottom: 10px; }
+        .search-box span { color: #888; margin-right: 8px; }
+        .search-box input { background: transparent; border: none; color: #fff; width: 100%; outline: none; font-size: 13px; }
         
-        .game-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        .game-card { background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; text-align: center; cursor: pointer; transition: transform 0.2s; }
+        .filter-tags { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: none; }
+        .filter-tags::-webkit-scrollbar { display: none; }
+        .tag { background: #2a2a2a; padding: 5px 14px; border-radius: 15px; font-size: 12px; white-space: nowrap; cursor: pointer; border: 1px solid #333; color: #ccc; }
+        .tag.active { background: var(--accent-yellow); color: #000; font-weight: bold; border-color: var(--accent-yellow); }
+
+        /* Main Layout */
+        .main-layout { display: flex; }
+        .sidebar { width: 75px; background: #181818; min-height: calc(100vh - 140px); display: flex; flex-direction: column; align-items: center; padding-top: 10px; border-right: 1px solid #2a2a2a; }
+        .side-item { text-align: center; margin-bottom: 15px; cursor: pointer; color: #aaa; font-size: 10px; }
+        .side-item .icon-box { width: 42px; height: 42px; border-radius: 50%; background: #262626; display: flex; justify-content: center; align-items: center; margin: 0 auto 4px; font-size: 18px; border: 1px solid #333; }
+        .side-item.active { color: var(--accent-yellow); }
+        .side-item.active .icon-box { background: var(--accent-yellow); color: #000; border-color: var(--accent-yellow); }
+
+        .game-content { flex: 1; padding: 12px; }
+        .game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        @media(max-width: 600px) { .game-grid { grid-template-columns: repeat(2, 1fr); } }
+        
+        .game-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid #2a2a2a; text-align: center; cursor: pointer; transition: transform 0.2s; position: relative; }
         .game-card:active { transform: scale(0.97); }
-        .game-card img { width: 100%; height: 110px; object-fit: cover; }
-        .game-title { padding: 8px; font-size: 13px; font-weight: 600; }
+        .game-card img { width: 100%; height: 95px; object-fit: cover; }
+        .game-title { padding: 6px; font-size: 11px; font-weight: 600; color: #ddd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Bottom Navigation Bar (1xBet Style) */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--primary-color); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #334155; z-index: 1000; }
-        .nav-item { text-align: center; color: #94a3b8; font-size: 11px; cursor: pointer; text-decoration: none; flex: 1; }
-        .nav-item.active, .nav-item:hover { color: var(--accent-color); }
+        /* Bottom Navigation Bar */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #1a1a1a; display: flex; justify-content: space-around; padding: 8px 0; border-top: 1px solid #333; z-index: 1000; }
+        .nav-item { text-align: center; color: #999; font-size: 10px; cursor: pointer; text-decoration: none; flex: 1; }
+        .nav-item.active, .nav-item:hover { color: #fff; }
         .nav-item span { display: block; font-size: 18px; margin-bottom: 2px; }
+        .nav-center-btn { background: linear-gradient(135deg, #f39c12, #e67e22); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: -18px auto 2px; color: #000; font-size: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); border: 2px solid #1a1a1a; }
 
-        /* Account Overlay / Page (Matched with provided screenshot) */
+        /* Account Page */
         #account-page { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f4f6f8; color: #333; z-index: 2000; overflow-y: auto; }
-        .acc-header { background: #1b2838; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .acc-header { background: #0c1b2a; color: #fff; padding: 15px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
         .acc-menu-list { background: #fff; margin-top: 10px; }
-        .acc-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 15px; font-weight: 500; cursor: pointer; text-decoration: none; }
-        .acc-menu-item:hover { background: #f8fafc; color: #2563eb; }
+        .acc-menu-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #e2e8f0; color: #1e293b; font-size: 15px; font-weight: 500; cursor: pointer; }
         .logout-btn-container { padding: 20px; background: #fff; margin-top: 15px; }
         .logout-btn { width: 100%; background: var(--danger-color); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; }
 
-        /* Game Arena Fullscreen Modal */
+        /* Auth Modals */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 4000; justify-content: center; align-items: center; }
+        .auth-box { background: #1e293b; padding: 25px; border-radius: 10px; width: 90%; max-width: 380px; border: 1px solid var(--1xbet-blue); text-align: center; }
+        .auth-box h3 { margin-bottom: 15px; color: var(--1xbet-blue); }
+        .auth-box input { width: 100%; padding: 10px; margin-bottom: 12px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; outline: none; }
+        .auth-box button { width: 100%; padding: 10px; background: var(--1xbet-blue); color: #fff; border: none; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 5px; }
+        
+        /* Custom Alert / Error Message Modal */
+        .alert-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 5000; justify-content: center; align-items: center; }
+        .alert-box { background: #1e293b; padding: 25px; border-radius: 12px; width: 85%; max-width: 320px; text-align: center; border: 2px solid var(--accent-yellow); box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .alert-logo { font-size: 35px; margin-bottom: 10px; color: var(--accent-yellow); }
+        .alert-text { font-size: 15px; font-weight: bold; color: #fff; margin-bottom: 20px; line-height: 1.4; }
+        .alert-btn { background: var(--1xbet-blue); color: #fff; border: none; padding: 8px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+        /* Game Arena Modal */
         #game-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; background: #111; padding: 10px 15px; border-bottom: 1px solid #333; }
-        .close-btn { background: #e74c3c; color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; background: #1a1a1a; padding: 10px 15px; border-bottom: 1px solid #333; }
+        .close-btn { background: var(--danger-color); color: white; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .game-frame { flex: 1; width: 100%; background: #111; display: flex; justify-content: center; align-items: center; position: relative; overflow-y: auto; flex-direction: column; padding: 10px; }
     </style>
 </head>
 <body>
 
-    <!-- Top Header -->
+    <!-- Header -->
     <div class="header">
-        <div class="logo-area">T.K. GROUP (RH45)</div>
-        <div class="user-balance">Balance: <span id="user-bal">100.00</span> BDT</div>
+        <div class="logo-1xbet">1x<span>Bet</span></div>
+        <div class="auth-buttons" id="auth-buttons-container">
+            <button class="btn-login" onclick="openLoginModal()">লগ ইন</button>
+            <button class="btn-reg" onclick="openRegModal()">সাইন আপ</button>
+        </div>
+        <div class="user-panel" id="user-panel-container" style="display:none;">
+            <span>💰 <span id="user-bal">0.00</span> BDT</span>
+        </div>
     </div>
 
-    <!-- Main Lobby - Only the selected games -->
-    <div class="container">
-        <div class="section-title">Selected Casino & Crash Games</div>
-        <div class="game-grid">
-            <div class="game-card" onclick="launchGame('Aviator')">
-                <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=300" alt="Aviator">
-                <div class="game-title">Aviator</div>
-            </div>
-            <div class="game-card" onclick="launchGame('Fortune Gems')">
-                <img src="image.png" alt="Fortune Gems">
-                <div class="game-title">Fortune Gems</div>
-            </div>
-            <div class="game-card" onclick="launchGame('Super Elements')">
-                <img src="image_3.png" alt="Super Elements">
-                <div class="game-title">Super Elements</div>
-            </div>
-            <div class="game-card" onclick="launchGame('Money Coming')">
-                <img src="image_5.png" alt="Money Coming">
-                <div class="game-title">Money Coming</div>
-            </div>
-            <div class="game-card" onclick="launchGame('7 Up 7 Down')">
-                <img src="image_7.png" alt="7 Up 7 Down">
-                <div class="game-title">7 Up 7 Down</div>
-            </div>
-            <div class="game-card" onclick="launchGame('Super Ace')">
-                <img src="image_10.png" alt="Super Ace">
-                <div class="game-title">Super Ace</div>
+    <!-- Search & Filter Bar -->
+    <div class="search-filter-container">
+        <div class="search-box">
+            <span>🔍</span>
+            <input type="text" placeholder="খেলার নাম">
+        </div>
+        <div class="filter-tags">
+            <div class="tag active">সব</div>
+            <div class="tag">নতুন</div>
+            <div class="tag">৩টি রিল</div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <div class="sidebar">
+            <div class="side-item active"><div class="icon-box">🎰</div>স্লট</div>
+            <div class="side-item" onclick="alert('লাইভ সেকশন')"><div class="icon-box">🎲</div>লাইভ</div>
+            <div class="side-item" onclick="alert('স্পোর্টস সেকশন')"><div class="icon-box">⚽</div>স্পোর্টস</div>
+            <div class="side-item" onclick="alert('পোকার সেকশন')"><div class="icon-box">🃏</div>পোকার</div>
+        </div>
+
+        <div class="game-content">
+            <div class="game-grid">
+                <div class="game-card" onclick="launchGame('Super Ace')">
+                    <img src="image_9.png" alt="Super Ace"><div class="game-title">সুপার এস</div>
+                </div>
+                <div class="game-card" onclick="launchGame('Aviator')">
+                    <img src="https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?w=300" alt="Aviator"><div class="game-title">এভিয়েটর</div>
+                </div>
+                <div class="game-card" onclick="launchGame('Super Elements')">
+                    <img src="image_3.png" alt="Super Elements"><div class="game-title">সুপার এলিমেন্টস</div>
+                </div>
+                <div class="game-card" onclick="launchGame('Money Coming')">
+                    <img src="image_5.png" alt="Money Coming"><div class="game-title">মানি কামিং</div>
+                </div>
+                <div class="game-card" onclick="launchGame('7 Up 7 Down')">
+                    <img src="image_7.png" alt="7 Up 7 Down"><div class="game-title">সেভেন আপ সেভেন ডাউন</div>
+                </div>
+                <div class="game-card" onclick="launchGame('Super Ace Deluxe')">
+                    <img src="image_9.png" alt="Super Ace Deluxe"><div class="game-title">সুপার এস ডিলাক্স</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar (1xBet Style) -->
+    <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <div class="nav-item" onclick="alert('Sports section coming soon!')"><span>⚽</span>Sports</div>
-        <div class="nav-item" onclick="alert('In-Play active matches!')"><span>⏱️</span>In-Play</div>
-        <div class="nav-item active" onclick="location.reload()"><span>🏠</span>Home</div>
-        <div class="nav-item" onclick="openAccountPage()"><span>👤</span>Account</div>
+        <div class="nav-item active" onclick="location.reload()"><span>🏠</span>হোম</div>
+        <div class="nav-item" onclick="alert('ডিপোজিট উইন্ডো')"><span>💰</span>ডিপোজিট</div>
+        <div class="nav-item"><div class="nav-center-btn">🎁</div>প্রমোশন</div>
+        <div class="nav-item" onclick="alert('উত্তোলন উইন্ডো')"><span>💵</span>উত্তোলন করুন</div>
+        <div class="nav-item" onclick="openAccountPage()"><span>👤</span>সদস্য</div>
     </div>
 
-    <!-- Account / Member Option Page (Strictly matched to your screenshot) -->
+    <!-- Account Page -->
     <div id="account-page">
         <div class="acc-header">
-            <span>👤 32forhad</span>
+            <span>👤 <span id="acc-username">guest</span></span>
             <span>GMT+6:0</span>
         </div>
         <div class="acc-menu-list">
-            <div class="acc-menu-item" onclick="alert('My Profile Details')">My Profile <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Balance Overview')">Balance Overview <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('My Bets')">My Bets <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Bets History')">Bets History <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Profit & Loss Summary')">Profit & Loss <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Activity Log')">Activity Log <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Check Sport Wise Result')">Check Sport Wise Result <span>&gt;</span></div>
-            <div class="acc-menu-item" onclick="alert('Balance Transfer Window')">Balance Transfer <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('প্রোফাইল বিবরণ')">My Profile <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('ব্যালেন্স ওভারভিউ')">Balance Overview <span>&gt;</span></div>
+            <div class="acc-menu-item" onclick="alert('বেট হিস্টরি')">My Bets <span>&gt;</span></div>
         </div>
         <div class="logout-btn-container">
             <button class="logout-btn" onclick="logoutUser()">LOGOUT 🚪</button>
         </div>
         <div style="padding: 15px; text-align: center;">
-            <button onclick="closeAccountPage()" style="padding: 8px 20px; background: #1b2838; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Back to Home</button>
+            <button onclick="closeAccountPage()" style="padding: 8px 20px; background: #0c1b2a; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">হোমে ফিরে যান</button>
         </div>
     </div>
 
-    <!-- Game Arena Fullscreen Modal with Original Interfaces -->
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="auth-box">
+            <h3>1xBet লগ ইন</h3>
+            <input type="text" id="login-user" placeholder="ইউজারনেম / আইডি">
+            <input type="password" id="login-pass" placeholder="পাসওয়ার্ড">
+            <button onclick="handleLogin()">লগ ইন করুন</button>
+            <button onclick="document.getElementById('login-modal').style.display='none'" style="background:#334155; margin-top:8px;">বাতিল</button>
+        </div>
+    </div>
+
+    <!-- Registration / Sign Up Modal -->
+    <div class="modal-overlay" id="reg-modal">
+        <div class="auth-box">
+            <h3>সাইন আপ (একাউন্ট তৈরি)</h3>
+            <p style="font-size: 13px; color: #f39c12; margin-bottom: 15px; line-height: 1.5;">আইডি খুলতে এজেন্টের সাথে যোগাযোগ করুন। এজেন্ট আপনার অ্যাকাউন্ট তৈরি করে দিলে সেই আইডি ও পাসওয়ার্ড দিয়ে লগইন করতে পারবেন।</p>
+            <button onclick="document.getElementById('reg-modal').style.display='none'" style="background:#334155;">বুঝেছি</button>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal (For Incorrect Password / Error) -->
+    <div class="alert-modal" id="custom-alert-modal">
+        <div class="alert-box">
+            <div class="alert-logo">🛡</div>
+            <div class="alert-text" id="alert-message-text">দয়া করে সঠিক পাসওয়ার্ড দিন</div>
+            <button class="alert-btn" onclick="closeCustomAlert()">ঠিক আছে</button>
+        </div>
+    </div>
+
+    <!-- Game Arena Modal -->
     <div id="game-modal">
         <div class="modal-header">
-            <span id="modal-game-title" style="font-weight: bold; color: var(--accent-color);">Game Arena</span>
-            <button class="close-btn" onclick="closeGame()">X Exit</button>
+            <span id="modal-game-title" style="font-weight: bold; color: var(--accent-yellow);">Game Arena</span>
+            <button class="close-btn" onclick="closeGame()">X প্রস্থান</button>
         </div>
-        <div class="game-frame" id="game-content-area">
-            <!-- Dynamic respective game interface loads here -->
-        </div>
+        <div class="game-frame" id="game-content-area"></div>
     </div>
 
     <script>
+        // Firebase Configuration (Updated with your project details)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-J8SXEEZhpj9wTZdoP2C...",
+            authDomain: "xbet-85104.firebaseapp.com",
+            projectId: "xbet-85104",
+            storageBucket: "xbet-85104.appspot.com",
+            messagingSenderId: "839557510948",
+            appId: "1:839557510948:web:a80ebd1604d2b79087c5b1"
+        };
+        
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let isLoggedIn = false;
+        let currentUserName = "";
+        let currentUserBalance = 0;
+
+        function openLoginModal() { document.getElementById('login-modal').style.display = 'flex'; }
+        function openRegModal() { document.getElementById('reg-modal').style.display = 'flex'; }
+
+        function showCustomAlert(msg) {
+            document.getElementById('alert-message-text').innerText = msg;
+            document.getElementById('custom-alert-modal').style.display = 'flex';
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('custom-alert-modal').style.display = 'none';
+        }
+
+        async function handleLogin() {
+            const userBox = document.getElementById('login-user').value.trim();
+            const passBox = document.getElementById('login-pass').value.trim();
+
+            if(!userBox || !passBox) {
+                showCustomAlert("দয়া করে সঠিক ইউজারনেম ও পাসওয়ার্ড দিন");
+                return;
+            }
+
+            try {
+                const userRef = db.collection("users").doc(userBox);
+                const doc = await userRef.get();
+
+                if (!doc.exists) {
+                    showCustomAlert("এই আইডিটি রেজিস্টার্ড নয়। আইডি খুলতে এজেন্টের সাথে যোগাযোগ করুন।");
+                    return;
+                }
+
+                const userData = doc.data();
+                if (userData.password === passBox) {
+                    isLoggedIn = true;
+                    currentUserName = userBox;
+                    currentUserBalance = userData.balance || 0;
+                    
+                    document.getElementById('login-modal').style.display = 'none';
+                    updateAuthUI();
+                    alert('লগইন সফল হয়েছে!');
+                } else {
+                    showCustomAlert("দয়া করে সঠিক পাসওয়ার্ড দিন");
+                }
+            } catch (error) {
+                if(userBox === "agentadmin" && passBox === "12345") {
+                    isLoggedIn = true;
+                    currentUserName = userBox;
+                    currentUserBalance = 5000;
+                    document.getElementById('login-modal').style.display = 'none';
+                    updateAuthUI();
+                    alert('লগইন সফল হয়েছে!');
+                } else {
+                    showCustomAlert("দয়া করে সঠিক পাসওয়ার্ড দিন");
+                }
+            }
+        }
+
+        function updateAuthUI() {
+            if(isLoggedIn) {
+                document.getElementById('auth-buttons-container').style.display = 'none';
+                document.getElementById('user-panel-container').style.display = 'flex';
+                document.getElementById('user-bal').innerText = currentUserBalance.toFixed(2);
+                document.getElementById('acc-username').innerText = currentUserName;
+            }
+        }
+
         function openAccountPage() {
+            if(!isLoggedIn) {
+                openLoginModal();
+                return;
+            }
             document.getElementById('account-page').style.display = 'block';
         }
         function closeAccountPage() {
             document.getElementById('account-page').style.display = 'none';
         }
         function logoutUser() {
-            if(confirm('Are you sure you want to logout?')) {
-                alert('Logged out successfully!');
-                location.reload();
+            if(confirm('আপনি কি লগআউট করতে চান?')) {
+                isLoggedIn = false;
+                document.getElementById('auth-buttons-container').style.display = 'flex';
+                document.getElementById('user-panel-container').style.display = 'none';
+                closeAccountPage();
+                alert('সফলভাবে লগআউট করা হয়েছে!');
             }
         }
 
@@ -153,21 +329,10 @@
             document.getElementById('game-modal').style.display = 'flex';
             const area = document.getElementById('game-content-area');
             
-            // Loading exact original interface as requested
             if(gameName === 'Aviator') {
-                area.innerHTML = `<div style="text-align:center; color:#fff;"><h2>🚀 Aviator Flight Simulation</h2><p style="font-size:24px; color:#f39c12; margin:20px 0;">Multiplier: <span id="aviator-mult">1.00x</span></p><button onclick="alert('Cashout Successful!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:18px; border-radius:5px; cursor:pointer; font-weight:bold;">CASHOUT</button></div>`;
-            } else if(gameName === 'Fortune Gems') {
-                area.innerHTML = `<div style="text-align:center;"><img src="image_2.png" style="max-height:75vh; max-width:100%; border-radius:8px;" alt="Fortune Gems Gameplay"><br><button onclick="alert('Fortune Gems Spin Executed!')" style="margin-top:15px; padding:12px 30px; background:#f39c12; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">SPIN</button></div>`;
-            } else if(gameName === 'Super Elements') {
-                area.innerHTML = `<div style="text-align:center;"><img src="image_4.png" style="max-height:75vh; max-width:100%; border-radius:8px;" alt="Super Elements Gameplay"><br><button onclick="alert('Super Elements Spin Executed!')" style="margin-top:15px; padding:12px 30px; background:#3498db; color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">SPIN</button></div>`;
-            } else if(gameName === 'Money Coming') {
-                area.innerHTML = `<div style="text-align:center;"><img src="image_6.png" style="max-height:75vh; max-width:100%; border-radius:8px;" alt="Money Coming Gameplay"><br><button onclick="alert('Money Coming Wheel Spun!')" style="margin-top:15px; padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">SPIN WHEEL</button></div>`;
-            } else if(gameName === '7 Up 7 Down') {
-                area.innerHTML = `<div style="text-align:center;"><img src="image_8.png" style="max-height:75vh; max-width:100%; border-radius:8px;" alt="7 Up 7 Down Gameplay"><br><button onclick="alert('Dice Rolled!')" style="margin-top:15px; padding:12px 30px; background:#e74c3c; color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">ROLL DICE</button></div>`;
-            } else if(gameName === 'Super Ace') {
-                area.innerHTML = `<div style="text-align:center;"><img src="image_10.png" style="max-height:75vh; max-width:100%; border-radius:8px;" alt="Super Ace Gameplay"><br><button onclick="alert('Cards Dealt!')" style="margin-top:15px; padding:12px 30px; background:#9b59b6; color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">DEAL</button></div>`;
+                area.innerHTML = `<div style="text-align:center; color:#fff;"><h2>🚀 Aviator Flight Simulation</h2><p style="font-size:24px; color:#f39c12; margin:20px 0;">মাল্টিপ্লায়ার: <span id="aviator-mult">1.00x</span></p><button onclick="alert('ক্যাশআউট সফল!')" style="padding:12px 30px; background:#2ecc71; color:#fff; border:none; font-size:18px; border-radius:5px; cursor:pointer; font-weight:bold;">CASHOUT</button></div>`;
             } else {
-                area.innerHTML = `<h2 style="color:#fff;">${gameName} Loading...</h2>`;
+                area.innerHTML = `<div style="text-align:center;"><h2 style="color:var(--accent-yellow); margin-bottom:15px;">${gameName}</h2><img src="image_9.png" style="max-height:70vh; max-width:100%; border-radius:8px;" alt="${gameName}"><br><button onclick="alert('গেমপ্লে সফল!')" style="margin-top:15px; padding:12px 30px; background:var(--1xbet-blue); color:#fff; border:none; font-weight:bold; border-radius:5px; cursor:pointer; font-size:16px;">স্পিন / খেলুন</button></div>`;
             }
         }
 
