@@ -121,7 +121,7 @@
         }
     </style>
 
-    <!-- ফায়ারবেস SDK (Compat Version) -->
+    <!-- ফায়ারবেস SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
@@ -130,9 +130,9 @@
     <div class="admin-container">
         <h2>⚡ 1xbet Master Admin Panel</h2>
 
-        <!-- ১. এজেন্ট পাসওয়ার্ড ও পয়েন্ট ম্যানেজমেন্ট -->
+        <!-- ১. এজেন্ট পয়েন্ট তৈরি ও পাসওয়ার্ড ম্যানেজমেন্ট -->
         <div class="card">
-            <h3>এজেন্ট পাসওয়ার্ড ও পয়েন্ট লিমিট পরিবর্তন</h3>
+            <h3>এজেন্টের পয়েন্ট তৈরি ও পাসওয়ার্ড ম্যানেজমেন্ট</h3>
             <div class="form-group">
                 <label>এজেন্ট আইডি:</label>
                 <input type="text" id="adminAgentId" value="RH45">
@@ -142,10 +142,10 @@
                 <input type="text" id="adminAgentPass" placeholder="নতুন পাসওয়ার্ড দিন">
             </div>
             <div class="form-group">
-                <label>এজেন্ট পয়েন্ট লিমিট বরাদ্দ:</label>
-                <input type="number" id="adminAgentPoints" value="50000" placeholder="যেমন: 50000">
+                <label>এজেন্টকে বরাদ্দকৃত মোট পয়েন্ট (Point Limit):</label>
+                <input type="number" id="adminAgentPoints" placeholder="যেমন: 50000">
             </div>
-            <button class="btn" onclick="updateAgent()">এজেন্ট আপডেট করুন</button>
+            <button class="btn" onclick="updateAgent()">পয়েন্ট ও তথ্য আপডেট করুন</button>
             <div class="success-msg" id="msgAgent"></div>
         </div>
 
@@ -199,9 +199,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // ফায়ারবেস কনফিগারেশন ও ইনিশিয়ালাইজেশন
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
             authDomain: "xbet-85104.firebaseapp.com",
@@ -211,11 +208,10 @@
             appId: "1:839557510948:web:a80ebd160402b78087e5b1"
         };
 
-        // ফায়ারবেস অ্যাপ ও ফায়ারস্টোর ডাটাবেজ চালু করা হলো
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // ফায়ারবেসে এজেন্টের তথ্য আপডেট করার ফাংশন
+        // অ্যাডমিন প্যানেল থেকে এজেন্টের পয়েন্ট ও পাসওয়ার্ড ফায়ারবেসে সেভ করা
         function updateAgent() {
             const id = document.getElementById('adminAgentId').value.trim();
             const pass = document.getElementById('adminAgentPass').value.trim();
@@ -229,11 +225,11 @@
             db.collection("agents").doc(id).set({
                 agentId: id,
                 password: pass,
-                balance: points,
+                totalPoints: points,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true })
             .then(() => {
-                document.getElementById('msgAgent').innerText = `সফল! '${id}' এর পাসওয়ার্ড ও নতুন ${points} পয়েন্ট ফায়ারবেসে আপডেট করা হয়েছে।`;
+                document.getElementById('msgAgent').innerText = `সফল! '${id}' এর জন্য ${points} পয়েন্ট এবং পাসওয়ার্ড আপডেট করা হয়েছে।`;
                 document.getElementById('adminAgentPass').value = "";
             })
             .catch((error) => {
