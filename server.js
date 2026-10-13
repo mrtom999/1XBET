@@ -4,7 +4,13 @@ const axios = require('axios');
 const { initializeApp } = require("firebase/app");
 const { getFirestore } = require("firebase/firestore");
 
-// আপনার ফায়ারবেজ কনফিগারেশন
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(cors());
+app.use(express.json());
+
+// ফায়ারবেজ কনফিগারেশন
 const firebaseConfig = {
   apiKey: "AIzaSyDgpnL-J0SxEEZhpjGWTZdpAFTvS1ww9QA",
   authDomain: "xbet-85104.firebaseapp.com",
@@ -14,28 +20,68 @@ const firebaseConfig = {
   appId: "1:839557510948:web:a80ebd160402b78087e5b1"
 };
 
-// ফায়ারবেজ ইনিশিয়ালাইজ করা
 const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(cors());
-app.use(express.json());
+// মেগানোডস এপিআই কনফিগারেশন
+const MEGANODES_BASE_URL = "https://api-prd-v2.meganodes.net";
+const API_TOKEN = process.env.API_TOKEN || "YOUR_MEGANODES_API_TOKEN"; // রেন্ডারের Environment Variable এ এটি সেট করতে হবে
 
 // টেস্ট রুট
 app.get('/', (req, res) => {
-    res.json({ status: "success", message: "1XBET Casino API Backend with Firebase is Running!" });
+    res.json({ status: "success", message: "1XBET Casino Backend with MegaNodes API is Running!" });
 });
 
-// ক্যাসিনো এপিআই বা ডাটা সংরক্ষণের জন্য রাউট
-app.post('/api/casino', async (req, res) => {
+// ১. গেম লঞ্চ করার রাউট (Get Game Launch URL)
+app.post('/api/launch-game', async (req, res) => {
     try {
-        // এখানে ফায়ারবেজে ডাটা সেভ বা এপিআই লজিক যোগ করতে পারেন
-        res.json({ success: true, message: "API endpoint active and connected to Firebase" });
+        const { user_code, provider_code, game_symbol, lang, return_url } = req.body;
+
+        const response = await axios.post(`${MEGANODES_BASE_URL}/game/game-url`, {
+            user_code,
+            provider_code,
+            game_symbol,
+            lang: lang || "en",
+            return_url: return_url || "https://your-frontend-domain.com",
+            win_ratio: 95
+        }, {
+            headers: {
+                "Authorization": `Bearer ${API_TOKEN}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        });
+
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+        res.status(500).json({ 
+            success: false, 
+            error: error.response ? error.response.data : error.message 
+        });
+    }
+});
+
+// ২. ইউজার তৈরি বা সিংক করার রাউট
+app.post('/api/create-user', async (req, res) => {
+    try {
+        const { name } = req.body;
+
+        const response = await axios.post(`${MEGANODES_BASE_URL}/user/create`, {
+            name
+        }, {
+            headers: {
+                "Authorization": `Bearer ${API_TOKEN}`,
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+            }
+        });
+
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ 
+            success: false, 
+            error: error.response ? error.response.data : error.message 
+        });
     }
 });
 
