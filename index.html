@@ -173,11 +173,11 @@
     </div>
 
     <script>
-        // আপনার রেন্ডার ব্যাকএন্ড সার্ভারের লাইভ ইউআরএল এখানে বসাবেন
-        const BACKEND_URL = "https://your-backend-service.onrender.com"; 
+        // রেন্ডার ব্যাকএন্ড সার্ভারের লাইভ ইউআরএল কানেক্ট করা হলো
+        const BACKEND_URL = "https://bw.onrender.com"; 
 
         async function launchGame(providerCode, gameSymbol) {
-            alert("ക্যাসিনো সার্ভার কানেক্ট হচ্ছে...");
+            alert("ক্যাসিনো সার্ভার কানেক্ট হচ্ছে...");
             try {
                 const response = await fetch(`${BACKEND_URL}/api/launch-game`, {
                     method: 'POST',
