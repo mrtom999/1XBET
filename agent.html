@@ -125,7 +125,7 @@
         }
     </style>
 
-    <!-- ফায়ারবেস SDK (Compat Version) -->
+    <!-- ফায়ারবেস SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
@@ -151,7 +151,8 @@
         <h2>⚡ 1xbet Agent Control Panel</h2>
 
         <div class="balance-box">
-            এজেন্ট আইডি: <span id="agentIdDisplay">RH45</span>
+            এজেন্ট আইডি: <span id="agentIdDisplay">RH45</span> <br>
+            অ্যাডমিন প্রদত্ত মোট পয়েন্ট (Total Limit): <span id="agentTotalPointsDisplay">0</span> পয়েন্ট
         </div>
 
         <!-- নতুন আইডি তৈরি সেকশন -->
@@ -207,7 +208,7 @@
             <button class="btn" onclick="updateUserPassword()">পাসওয়ার্ড পরিবর্তন করুন</button>
         </div>
 
-        <!-- ইউজার লিস্ট ও পাসওয়ার্ড চেক -->
+        <!-- ইউজার লিস্ট ও ডাটা -->
         <div class="card">
             <h3>ইউজার লিস্ট ও ডাটা</h3>
             <table>
@@ -238,21 +239,41 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const correctAgentUser = "RH45";
-        const correctAgentPass = "Pass.Rohit@sharma45";
-
+        // এজেন্ট লগইন এবং ফায়ারবেস থেকে পাসওয়ার্ড ও পয়েন্ট চেক করা
         function agentLogin() {
             const user = document.getElementById('agentUsername').value.trim();
             const pass = document.getElementById('agentPassword').value.trim();
             const errorBox = document.getElementById('loginError');
 
-            if (user === correctAgentUser && pass === correctAgentPass) {
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardSection').style.display = 'block';
-                loadUsersTable();
-            } else {
-                errorBox.innerText = "ভুল এজেন্ট আইডি অথবা পাসওয়ার্ড!";
+            if (!user || !pass) {
+                errorBox.innerText = "আইডি এবং পাসওয়ার্ড দিন!";
+                return;
             }
+
+            db.collection("agents").doc(user).get()
+            .then((doc) => {
+                if (!doc.exists) {
+                    errorBox.innerText = "এই এজেন্টের কোনো তথ্য পাওয়া যায়নি!";
+                    return;
+                }
+
+                const agentData = doc.data();
+                if (agentData.password === pass) {
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('dashboardSection').style.display = 'block';
+                    document.getElementById('agentIdDisplay').innerText = user;
+                    
+                    // অ্যাডমিন কর্তৃক বরাদ্দকৃত মোট পয়েন্ট ড্যাশবোর্ডে শো করবে
+                    document.getElementById('agentTotalPointsDisplay').innerText = agentData.totalPoints || 0;
+
+                    loadUsersTable();
+                } else {
+                    errorBox.innerText = "ভুল পাসওয়ার্ড!";
+                }
+            })
+            .catch((error) => {
+                errorBox.innerText = "এরর: " + error.message;
+            });
         }
 
         // ফায়ারবেসে নতুন ইউজার অ্যাকাউন্ট সেভ করা
@@ -277,7 +298,7 @@
                 document.getElementById('agentUser').value = "";
                 document.getElementById('agentPass').value = "";
                 document.getElementById('agentPoints').value = "";
-                loadUsersTable(); // লিস্ট রিফ্রেশ করবে
+                loadUsersTable();
             })
             .catch((error) => {
                 alert("এরর: " + error.message);
