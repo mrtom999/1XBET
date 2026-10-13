@@ -15,15 +15,23 @@
             background-color: #0d1117;
             color: #fff;
             padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .admin-container {
-            max-width: 650px;
-            margin: 0 auto;
+        .login-box, .admin-container {
+            width: 100%;
+            max-width: 500px;
             background-color: #161b22;
             border: 1px solid #30363d;
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .admin-container {
+            display: none;
+            max-width: 650px;
         }
         h2 {
             color: #ffcc00;
@@ -88,6 +96,12 @@
             font-weight: bold;
             font-size: 13px;
         }
+        .error-msg {
+            color: #d32f2f;
+            text-align: center;
+            font-size: 13px;
+            margin-top: 10px;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -127,7 +141,23 @@
 </head>
 <body>
 
-    <div class="admin-container">
+    <!-- মাস্টার অ্যাডমিন লগইন স্ক্রিন -->
+    <div class="login-box" id="adminLoginSection">
+        <h2>⚡ Master Admin Login</h2>
+        <div class="form-group">
+            <label>অ্যাডমিন ইউজারনেম:</label>
+            <input type="text" id="adminUser" placeholder="ইউজারনেম দিন">
+        </div>
+        <div class="form-group">
+            <label>অ্যাডমিন পাসওয়ার্ড:</label>
+            <input type="password" id="adminPass" placeholder="পাসওয়ার্ড দিন">
+        </div>
+        <button class="btn" onclick="adminLogin()">লগইন করুন</button>
+        <div class="error-msg" id="adminLoginError"></div>
+    </div>
+
+    <!-- মাস্টার অ্যাডমিন ড্যাশবোর্ড -->
+    <div class="admin-container" id="adminDashboardSection">
         <h2>⚡ 1xbet Master Admin Panel</h2>
 
         <!-- ১. এজেন্ট পয়েন্ট তৈরি ও পাসওয়ার্ড ম্যানেজমেন্ট -->
@@ -210,6 +240,23 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+
+        // অ্যাডমিন লগইন ভ্যালিডেশন
+        const correctAdminUser = "ruhan888";
+        const correctAdminPass = "Pass.forhad222";
+
+        function adminLogin() {
+            const user = document.getElementById('adminUser').value.trim();
+            const pass = document.getElementById('adminPass').value.trim();
+            const errorBox = document.getElementById('adminLoginError');
+
+            if (user === correctAdminUser && pass === correctAdminPass) {
+                document.getElementById('adminLoginSection').style.display = 'none';
+                document.getElementById('adminDashboardSection').style.display = 'block';
+            } else {
+                errorBox.innerText = "ভুল ইউজারনেম অথবা পাসওয়ার্ড!";
+            }
+        }
 
         // অ্যাডমিন প্যানেল থেকে এজেন্টের পয়েন্ট ও পাসওয়ার্ড ফায়ারবেসে সেভ করা
         function updateAgent() {
